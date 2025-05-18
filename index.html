@@ -8,49 +8,69 @@
     :root {
       --bg: #ffffff;
       --text: #333;
-      --card: #fff;
-      --accent: #6a1b9a;
-      --highlight: #f3e5f5;
+      --card: #f9f9f9;
+      --accent: #4a148c;
+      --highlight: #ede7f6;
+      --hover-accent: #6a1b9a;
     }
+
     body.dark {
       --bg: #1e1e1e;
-      --text: #e0e0e0;
-      --card: #2c2c2c;
+      --text: #f5f5f5;
+      --card: #2d2d2d;
       --accent: #bb86fc;
       --highlight: #3a2a4d;
+      --hover-accent: #ce94ff;
     }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      padding: 2rem;
       margin: 0;
-      transition: background 0.3s, color 0.3s;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      transition: all 0.3s ease;
     }
+
     h1 {
       text-align: center;
+      margin-top: 2rem;
       color: var(--accent);
-      margin-bottom: 1rem;
     }
+
     .container {
-      max-width: 700px;
-      margin: 0 auto;
-      background: var(--card);
+      max-width: 800px;
+      margin: 2rem auto;
       padding: 2rem;
-      border-radius: 10px;
-      box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+      background: var(--card);
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
       transition: background 0.3s;
     }
+
     textarea {
       width: 100%;
-      height: 150px;
+      min-height: 120px;
       padding: 1rem;
       font-size: 1rem;
       border-radius: 8px;
       border: 1px solid #ccc;
       resize: vertical;
+      background: var(--highlight);
+      color: var(--text);
+      transition: border 0.3s;
     }
+
+    textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
     button, .example-btn {
+      display: inline-block;
       margin-top: 1rem;
       background-color: var(--accent);
       color: white;
@@ -59,58 +79,72 @@
       font-size: 1rem;
       border-radius: 6px;
       cursor: pointer;
+      transition: background 0.3s;
     }
+
     button:hover, .example-btn:hover {
-      background-color: #4a148c;
+      background-color: var(--hover-accent);
     }
-    .result {
-      margin-top: 2rem;
-      padding: 1.5rem;
-      border-radius: 8px;
-      background-color: var(--highlight);
-      border-left: 6px solid var(--accent);
-      display: none;
-      opacity: 0;
-      transform: translateY(20px);
-      transition: all 0.4s ease-in-out;
-    }
-    .result.show {
-      display: block;
-      opacity: 1;
-      transform: translateY(0);
-    }
-    .method {
-      font-weight: bold;
-      font-size: 1.2rem;
-    }
-    .explanation {
-      margin-top: 0.5rem;
-    }
+
     .toggle {
       text-align: right;
       margin-bottom: 1rem;
     }
+
     .examples {
       display: flex;
       flex-wrap: wrap;
       gap: 0.5rem;
       margin-top: 1rem;
     }
+
     .example-btn {
       background-color: #9575cd;
+    }
+
+    .result {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      border-radius: 8px;
+      background-color: var(--highlight);
+      border-left: 6px solid var(--accent);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.4s ease-in-out;
+      display: none;
+    }
+
+    .result.show {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .method {
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+
+    .explanation {
+      margin-top: 0.5rem;
+      line-height: 1.5;
     }
   </style>
 </head>
 <body>
+
   <h1>Sampling Smart Accessor</h1>
+
   <div class="container">
     <div class="toggle">
       <label>
         <input type="checkbox" id="modeToggle" onchange="toggleMode()"> Dark Mode
       </label>
     </div>
+
     <textarea id="question" placeholder="Type your sampling question here..."></textarea>
     <button onclick="analyzeQuestion()">Get Sampling Method</button>
+
     <div class="examples">
       <button class="example-btn" onclick="loadExample(0)">Example 1</button>
       <button class="example-btn" onclick="loadExample(1)">Example 2</button>
@@ -118,6 +152,7 @@
       <button class="example-btn" onclick="loadExample(3)">Example 4</button>
       <button class="example-btn" onclick="loadExample(4)">Example 5</button>
     </div>
+
     <div id="output" class="result"></div>
   </div>
 
@@ -127,7 +162,7 @@
         name: "Voluntary Response Sample",
         keywords: ["self-selected", "volunteer", "chose to respond", "google form", "opted in", "decided to participate"],
         scenarios: [
-          /(google\s+form|form).*ask.*students.*participate/i,
+          /(form|survey).*ask.*students.*participate/i,
           /students.*(asked|invited).*respond.*survey/i,
           /form.*optional/i
         ],
@@ -175,52 +210,40 @@
       const input = document.getElementById("question").value.toLowerCase();
       const outputDiv = document.getElementById("output");
 
-      // First check specifically for Voluntary Response Sample
-      const voluntaryResponseRegexes = [
-        /(google\s+form|form).*ask.*students.*participate/i,
-        /students.*(asked|invited).*respond.*survey/i,
-        /form.*optional/i
-      ];
-
-      if (voluntaryResponseRegexes.some(regex => regex.test(input))) {
-        const method = methods.find(m => m.name === "Voluntary Response Sample");
-        outputDiv.innerHTML = `<div class="method">Answer: ${method.name}</div><div class="explanation">${method.explanation}</div>`;
-        outputDiv.className = "result show";
-        return;
-      }
-
-      // Check other sampling methods
+      // Try exact regex match first
       for (const method of methods) {
         if (method.scenarios.some(regex => regex.test(input))) {
           outputDiv.innerHTML = `<div class="method">Answer: ${method.name}</div><div class="explanation">${method.explanation}</div>`;
-          outputDiv.className = "result show";
+          outputDiv.classList.add('show');
           return;
         }
       }
 
+      // Then try keyword matching
       for (const method of methods) {
-        if (method.keywords.some(word => input.includes(word))) {
+        if (method.keywords.some(word => input.includes(word.toLowerCase()))) {
           outputDiv.innerHTML = `<div class="method">Answer: ${method.name}</div><div class="explanation">${method.explanation}</div>`;
-          outputDiv.className = "result show";
+          outputDiv.classList.add('show');
           return;
         }
       }
 
+      // If nothing matched
       outputDiv.innerHTML = `<div class="method">Answer: Unable to determine</div><div class="explanation">Please check the question for clarity or rephrase using sampling terminology.</div>`;
-      outputDiv.className = "result show";
+      outputDiv.classList.add('show');
     }
 
     const examples = [
-      "The class was told to answer a question. Each student had the same chance to be picked.",
-      "The university is split into faculties. One student is selected from each faculty.",
-      "A population is divided into towns. Some towns are picked, and every person in those towns is surveyed.",
-      "First, several towns were selected. Then 10 students were chosen from each selected town.",
+      "The lecturer asks the class to answer a question. Everyone has the same chance to be picked.",
+      "A university is split into faculties. One student is selected from each faculty.",
+      "A population is divided into towns. Some towns are picked, and everyone in those towns is surveyed.",
+      "First, several towns are selected. Then 10 students are chosen from each selected town.",
       "The Department of Economics sends out a Google Form asking students to participate. What type of sampling is this?"
     ];
 
     function loadExample(index) {
       document.getElementById("question").value = examples[index];
-      document.getElementById("output").className = "result";
+      document.getElementById("output").classList.remove('show');
     }
 
     function toggleMode() {
