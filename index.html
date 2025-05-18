@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -12,7 +13,6 @@
       --accent: #6a1b9a;
       --highlight: #f3e5f5;
     }
-
     body.dark {
       --bg: #1e1e1e;
       --text: #e0e0e0;
@@ -20,7 +20,6 @@
       --accent: #bb86fc;
       --highlight: #3a2a4d;
     }
-
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: var(--bg);
@@ -29,13 +28,11 @@
       margin: 0;
       transition: background 0.3s, color 0.3s;
     }
-
     h1 {
       text-align: center;
       color: var(--accent);
       margin-bottom: 1rem;
     }
-
     .container {
       max-width: 700px;
       margin: 0 auto;
@@ -45,7 +42,6 @@
       box-shadow: 0 8px 16px rgba(0,0,0,0.15);
       transition: background 0.3s;
     }
-
     textarea {
       width: 100%;
       height: 150px;
@@ -55,7 +51,6 @@
       border: 1px solid #ccc;
       resize: vertical;
     }
-
     button, .example-btn {
       margin-top: 1rem;
       background-color: var(--accent);
@@ -66,11 +61,9 @@
       border-radius: 6px;
       cursor: pointer;
     }
-
     button:hover, .example-btn:hover {
       background-color: #4a148c;
     }
-
     .result {
       margin-top: 2rem;
       padding: 1.5rem;
@@ -82,34 +75,28 @@
       transform: translateY(20px);
       transition: all 0.4s ease-in-out;
     }
-
     .result.show {
       display: block;
       opacity: 1;
       transform: translateY(0);
     }
-
     .method {
       font-weight: bold;
       font-size: 1.2rem;
     }
-
     .explanation {
       margin-top: 0.5rem;
     }
-
     .toggle {
       text-align: right;
       margin-bottom: 1rem;
     }
-
     .examples {
       display: flex;
       flex-wrap: wrap;
       gap: 0.5rem;
       margin-top: 1rem;
     }
-
     .example-btn {
       background-color: #9575cd;
     }
@@ -123,10 +110,8 @@
         <input type="checkbox" id="modeToggle" onchange="toggleMode()"> Dark Mode
       </label>
     </div>
-
     <textarea id="question" placeholder="Type your sampling question here..."></textarea>
     <button onclick="analyzeQuestion()">Get Sampling Method</button>
-
     <div class="examples">
       <button class="example-btn" onclick="loadExample(0)">Example 1</button>
       <button class="example-btn" onclick="loadExample(1)">Example 2</button>
@@ -134,10 +119,8 @@
       <button class="example-btn" onclick="loadExample(3)">Example 4</button>
       <button class="example-btn" onclick="loadExample(4)">Example 5</button>
     </div>
-
     <div id="output" class="result"></div>
   </div>
-
   <script>
 const methods = [
   {
@@ -146,6 +129,13 @@ const methods = [
       "volunteer", "volunteered", "self selected", "opted in", "chose to respond",
       "decided to participate", "their choice", "not randomly selected", "responded on their own",
       "anyone could participate", "self-selection"
+    ],
+    scenarios: [
+      /google form.*(asked|invited|emailed|sent).*(students|people|participants)/,
+      /(students|people|participants).*(asked|invited|requested).*(fill|complete|answer|respond).*(form|survey|questionnaire)/,
+      /(survey|form|questionnaire) (is|was) (sent|shared|distributed).*(anyone|all|students|people|participants).*(can|could|may|choose|decide).*(respond|participate)/,
+      /students.*(invited|asked|requested).*(participate|respond).*(not required|not mandatory|optional)/,
+      /(department|organization|group|committee) (sends|sent|emails|emailed|distributes|distributed|shares|shared).*(survey|form|questionnaire).*to.*(students|people|participants).*to.*participate/
     ],
     explanation: "This is a Voluntary Response Sample because participants self-selected—they chose to respond, not selected by the researcher."
   },
@@ -157,6 +147,13 @@ const methods = [
       "randomly chosen individuals", "selected at random from the whole group",
       "list of all", "selected from a list", "all members", "every individual had a chance"
     ],
+    scenarios: [
+      /random(ly)? (choose|select|pick|draw) (\d+|some|several|many|few) (students|children|people|individuals|participants|members) (from|out of) (the )?(total )?(\d+|all)/,
+      /(obtain|get|take) (a )?list of (all|every) (students|children|people|individuals|participants|members).*select(ed)? (\d+|some|several|many|few) (at )?random/,
+      /from (a|the) list of all/,
+      /(everyone|every individual).*(equal chance|equal opportunity|same chance).*select(ed)?/,
+      /(selected|picked|chosen) (at )?random (from|out of|among) (all|the entire|the whole) (population|group|students|members)/
+    ],
     explanation: "This is Simple Random Sampling because every individual in the population had an equal chance of being selected, and no grouping was done."
   },
   {
@@ -165,6 +162,13 @@ const methods = [
       "strata", "stratified", "each group", "each faculty", "one from each group", "one from each",
       "each stratum", "different groups selected", "divided into categories", "subgroups by characteristic",
       "grouped by", "separated by", "distinct groups then sampled"
+    ],
+    scenarios: [
+      /(population|students|people|members|participants).*(divided|grouped|separated).*(by|according to|based on).*(category|characteristic|faculty|age|gender|group|strata|stratum|class|type)/,
+      /(one|some|a few|a certain number) (student|person|individual|participant|member) from each (group|stratum|category|faculty|type|class|division|subgroup)/,
+      /(sample|select|pick|choose).*(from each|from every).*(group|stratum|category|faculty|type|class|subgroup)/,
+      /(each group|each strata|each stratum|each category).*(has|provides|supplies).*(one|some|a few|a certain number)/,
+      /grouped by.*(faculty|grade|age|gender|type|category|class|major).*(then|and).*(sample|select|pick|choose).*(from each)/
     ],
     explanation: "This is Stratified Random Sampling because the population was divided into distinct groups (strata) based on a characteristic, and samples were taken from each group."
   },
@@ -175,6 +179,12 @@ const methods = [
       "some from subgroup", "grouped twice", "sample in two steps", "first select some groups then select within",
       "selected at random from groups chosen at random", "several stages", "sampled in stages"
     ],
+    scenarios: [
+      /(first|initially) (choose|select|pick).*(groups|towns|schools|areas|locations|villages|communities).*(at )?random.*then.*(choose|select|pick).*(individuals|children|students|participants|members).*(from|within) (those|the selected) (groups|towns|schools|areas|locations|villages|communities)/,
+      /(groups|towns|schools|areas|locations|villages|communities) (are|were) (chosen|selected|picked) (at )?random.*then.*(individuals|students|children|participants|members) (are|were) (chosen|selected|picked) (at )?random (within|from) (those|the selected) (groups|towns|schools|areas|locations|villages|communities)/,
+      /(sample|select|pick|choose) (groups|clusters|towns|areas|districts).*then.*(sample|select|pick|choose) (individuals|students|children|participants|members) (within|from) those/,
+      /(two|multiple) (steps|stages).*(first|then).*(sample|select|pick|choose)/
+    ],
     explanation: "This is Multistage Random Sampling because sampling was conducted in two or more stages (e.g., groups were selected, then individuals within those groups were sampled)."
   },
   {
@@ -183,81 +193,67 @@ const methods = [
       "cluster", "divided into groups", "all selected from group", "everyone in group", "entire group selected",
       "whole subgroup", "all members from subgroup", "cluster selected", "surveyed all in group", "all individuals from some groups"
     ],
+    scenarios: [
+      /(population|students|people|members|participants).*(divided|grouped).*(clusters|groups|blocks|classes|sections|teams).*(randomly|at random)? (choose|select|pick) (some|one|several|a few) (clusters|groups|blocks|classes|sections|teams).*(survey|study|select|pick|choose|question|ask) (all|everyone|every|each) (in|within|from) (the|those) (clusters|groups|blocks|classes|sections|teams)/,
+      /(some|one|several|a few) (clusters|groups|blocks|classes|sections|teams) (are|were) (chosen|selected|picked) (at )?random.*all (individuals|students|children|participants|members) (in|from|within) (those|the selected) (clusters|groups|blocks|classes|sections|teams) (are|were) (surveyed|studied|selected|picked|chosen|questioned|asked)/,
+      /select (entire|whole) (groups|clusters|blocks|classes|sections|teams)/,
+      /(entire|whole) (group|class|section|cluster|team) (is|was) (selected|picked|chosen)/,
+      /(pick|choose|select) (some|a few|several|one) (groups|classes|clusters|sections|teams), (survey|study|question|ask) everyone in (those|the selected)/
+    ],
     explanation: "This is Cluster Sampling because the population was divided into groups (clusters), and all individuals in selected clusters were surveyed."
   }
 ];
 
-// Enhanced pattern recognition for multi-stage and list-based scenarios
 function analyzeQuestion() {
-  const input = document.getElementById("question").value.toLowerCase();
-  const outputDiv = document.getElementById("output");
+const input = document.getElementById("question").value.toLowerCase();
+const outputDiv = document.getElementById("output");
 
-  // Special multistage detection: look for two-step sampling logic
-  if (
-    /(chosen|selected|picked) at random.*(from|among|within).*(chosen|selected|picked) at random/.test(input) ||
-    /(first|initially) (chosen|selected|picked).*then.*(chosen|selected|picked)/.test(input) ||
-    /(some|several) (groups|towns|schools|areas|locations|villages|communities) (were|are) (chosen|selected|picked) (at )?random.*(then|and next|and afterwards|followed by).*(children|individuals|students|people|members|participants) (were|are) (chosen|selected|picked) (at )?random/.test(input) ||
-    /(groups.*random.*then.*individuals.*random)|(random.*groups.*then.*random.*individuals)/.test(input)
-  ) {
-    outputDiv.innerHTML = `
-      <div class="method">Answer: Multistage Random Sampling</div>
-      <div class="explanation">This is Multistage Random Sampling because groups were selected at random, then individuals within those groups were also selected at random.</div>
-    `;
-    outputDiv.className = "result show";
-    return;
-  }
-
-  // Simple random sampling: detect "from a list of all", "select X from Y", etc.
-  if (
-    /from (a|the) list of all/.test(input) ||
-    /(randomly|at random) (choose|select|pick|draw) \d+ (students|children|people|individuals|participants|members) (from|out of) (the )?(total )?\d+/.test(input) ||
-    /(obtain|get|take) (a )?list of (all|every) (students|children|people|individuals|participants|members).*select(ed)? \d+ (at )?random/.test(input) ||
-    /(select|pick|choose) (a|some|several|many|few|random sample of) (students|children|people|individuals|participants|members) (at )?random (from|among|out of) (the )?(entire )?(population|group|list)/.test(input)
-  ) {
-    outputDiv.innerHTML = `
-      <div class="method">Answer: Simple Random Sampling</div>
-      <div class="explanation">This is Simple Random Sampling because the sample was selected at random from the entire population, with each individual having an equal chance of being chosen.</div>
-    `;
-    outputDiv.className = "result show";
-    return;
-  }
-
-  // Keyword-based fallback
-  for (const method of methods) {
-    if (method.keywords.some(phrase => input.includes(phrase))) {
-      outputDiv.innerHTML = `
-        <div class="method">Answer: ${method.name}</div>
-        <div class="explanation">${method.explanation}</div>
-      `;
-      outputDiv.className = "result show";
-      return;
-    }
-  }
-
-  // Fallback if nothing matches
-  outputDiv.innerHTML = `
-    <div class="method">Answer: Unable to determine</div>
-    <div class="explanation">Please check the question for clarity or rephrase using sampling terminology.</div>
-  `;
-  outputDiv.className = "result show";
+// 1. Try scenario-based (regex) matching for each method
+for (const method of methods) {
+if (method.scenarios) {
+for (const scenario of method.scenarios) {
+if (scenario.test(input)) {
+outputDiv.innerHTML = `             <div class="method">Answer: ${method.name}</div>             <div class="explanation">${method.explanation}</div>
+          `;
+outputDiv.className = "result show";
+return;
+}
+}
+}
 }
 
-const examples = [
-  "The class was told to answer a question. Each student had the same chance to be picked.",
-  "The university is split into faculties. One student is selected from each faculty.",
-  "A population is divided into towns. Some towns are picked, and every person in those towns is surveyed.",
-  "A study is being conducted to determine the average number of primary school children in rural St. Andrew who attend face-to-face sessions. Seven towns were chosen at random from a total of twenty. Forty children were then selected at random. What type of sampling method is being used?",
-  "The Department of Economics would like to know the preferred mode of delivery for classes next semester. They obtain a list of all 2000 students and select 100 from that list. What type of sampling Method is being used?"
+// 2. Try keyword-based fallback
+for (const method of methods) {
+if (method.keywords.some(phrase => input.includes(phrase))) {
+outputDiv.innerHTML = `         <div class="method">Answer: ${method.name}</div>         <div class="explanation">${method.explanation}</div>
+      `;
+outputDiv.className = "result show";
+return;
+}
+}
+
+// 3. Fallback if nothing matches
+outputDiv.innerHTML = `     <div class="method">Answer: Unable to determine</div>     <div class="explanation">Please check the question for clarity or rephrase using sampling terminology.</div>
+  `;
+outputDiv.className = "result show";
+}
+
+const examples = \[
+"The class was told to answer a question. Each student had the same chance to be picked.",
+"The university is split into faculties. One student is selected from each faculty.",
+"A population is divided into towns. Some towns are picked, and every person in those towns is surveyed.",
+"A study is being conducted to determine the average number of primary school children in rural St. Andrew who attend face-to-face sessions. Seven towns were chosen at random from a total of twenty, then 20 children were picked at random from each selected town.",
+"The Department of Economics would like to know the preferred mode of delivery for classes next semester. The department sends out a google form asking students to participate. What type of sampling method is being used?"
 ];
 
 function loadExample(index) {
-  document.getElementById("question").value = examples[index];
-  document.getElementById("output").className = "result";
+document.getElementById("question").value = examples\[index];
+document.getElementById("output").className = "result";
 }
 
 function toggleMode() {
-  document.body.classList.toggle("dark");
-}
-  </script>
+document.body.classList.toggle("dark");
+} </script>
+
 </body>
 </html>
