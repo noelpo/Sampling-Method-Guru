@@ -124,19 +124,50 @@
   <script>
     const methods = [
       {
-        name: "Cluster Sampling",
-        keywords: [
-          "cluster", "divided into groups", "all selected from group", "everyone in group", "entire group selected",
-          "whole subgroup", "all members from subgroup", "cluster selected", "surveyed all in group", "all individuals from some groups"
-        ],
+        name: "Voluntary Response Sample",
+        keywords: ["self-selected", "volunteer", "chose to respond", "google form", "opted in", "decided to participate"],
         scenarios: [
-          /(population|students|people|members|participants).*(divided|grouped).*(clusters|groups|blocks|classes|sections|teams).*(randomly|at random)? (choose|select|pick) (some|one|several|a few)/i,
-          /(some|one|several|a few) (clusters|groups|blocks|classes|sections|teams) (are|were) (chosen|selected|picked) (at )?random.*all (individuals|students|children|participants|members) (in|from) (those|these|the) (clusters|groups|blocks|classes|sections|teams)/i,
-          /select (entire|whole) (groups|clusters|blocks|classes|sections|teams)/i,
-          /(entire|whole) (group|class|section|cluster|team) (is|was) (selected|picked|chosen)/i,
-          /(pick|choose|select) (some|a few|several|one) (groups|classes|clusters|sections|teams), (survey|study|question|ask) everyone in (those|the selected)/i
+          /google form.*(asking|inviting|sent).*students.*participate/i,
+          /students.*(asked|invited).*respond.*survey/i,
+          /form.*optional/i
         ],
-        explanation: "This is Cluster Sampling because the population was divided into groups (clusters), and all individuals in selected clusters were surveyed."
+        explanation: "This is a Voluntary Response Sample because participants chose to respond — they were not randomly selected."
+      },
+      {
+        name: "Simple Random Sampling",
+        keywords: ["random sample", "equal chance", "no groups", "entire population", "randomly selected individuals"],
+        scenarios: [
+          /random(ly)? (select|choose|pick|draw) (students|people) (from|out of) (all|entire|whole) group/i,
+          /everyone.*equal chance/i
+        ],
+        explanation: "This is Simple Random Sampling because every individual in the population had an equal chance of being selected, with no grouping."
+      },
+      {
+        name: "Stratified Random Sampling",
+        keywords: ["stratified", "strata", "grouped by", "divided into categories", "one from each"],
+        scenarios: [
+          /divided.*by.*(faculty|gender|age|group)/i,
+          /select.*(one|some).*from each group/i
+        ],
+        explanation: "This is Stratified Random Sampling because the population was divided once into unique groups and one or more individuals were selected from each."
+      },
+      {
+        name: "Multistage Random Sampling",
+        keywords: ["multiple stages", "select groups then individuals", "grouped twice", "sampled in steps"],
+        scenarios: [
+          /first.*select.*(towns|schools|areas).*then.*(select|choose).*students/i,
+          /select.*groups.*then.*sample.*from each/i
+        ],
+        explanation: "This is Multistage Random Sampling because the population was divided more than once and individuals were sampled from final subgroups."
+      },
+      {
+        name: "Cluster Sampling",
+        keywords: ["cluster", "group selected", "surveyed all in group", "entire group", "whole subgroup"],
+        scenarios: [
+          /divided.*groups.*select.*some.*survey all.*in those groups/i,
+          /select.*entire.*group.*and.*survey all/i
+        ],
+        explanation: "This is Cluster Sampling because the population was divided into groups, and all members of selected groups were surveyed."
       }
     ];
 
@@ -144,39 +175,23 @@
       const input = document.getElementById("question").value.toLowerCase();
       const outputDiv = document.getElementById("output");
 
-      // Scenario-based matching
       for (const method of methods) {
-        if (method.scenarios) {
-          for (const scenario of method.scenarios) {
-            if (scenario.test(input)) {
-              outputDiv.innerHTML = `
-                <div class="method">Answer: ${method.name}</div>
-                <div class="explanation">${method.explanation}</div>
-              `;
-              outputDiv.className = "result show";
-              return;
-            }
-          }
-        }
-      }
-
-      // Keyword-based fallback
-      for (const method of methods) {
-        if (method.keywords.some(phrase => input.includes(phrase))) {
-          outputDiv.innerHTML = `
-            <div class="method">Answer: ${method.name}</div>
-            <div class="explanation">${method.explanation}</div>
-          `;
+        if (method.scenarios.some(regex => regex.test(input))) {
+          outputDiv.innerHTML = `<div class="method">Answer: ${method.name}</div><div class="explanation">${method.explanation}</div>`;
           outputDiv.className = "result show";
           return;
         }
       }
 
-      // No match
-      outputDiv.innerHTML = `
-        <div class="method">Answer: Unable to determine</div>
-        <div class="explanation">Please check the question for clarity or rephrase using sampling terminology.</div>
-      `;
+      for (const method of methods) {
+        if (method.keywords.some(word => input.includes(word))) {
+          outputDiv.innerHTML = `<div class="method">Answer: ${method.name}</div><div class="explanation">${method.explanation}</div>`;
+          outputDiv.className = "result show";
+          return;
+        }
+      }
+
+      outputDiv.innerHTML = `<div class="method">Answer: Unable to determine</div><div class="explanation">Please check the question for clarity or rephrase using sampling terminology.</div>`;
       outputDiv.className = "result show";
     }
 
@@ -184,8 +199,8 @@
       "The class was told to answer a question. Each student had the same chance to be picked.",
       "The university is split into faculties. One student is selected from each faculty.",
       "A population is divided into towns. Some towns are picked, and every person in those towns is surveyed.",
-      "A study is being conducted to determine the average number of primary school children in rural St. Andrew who attend face-to-face sessions. Seven towns were chosen at random from a total of thirty-four towns. All the primary school children in each of the selected towns were surveyed.",
-      "The Department of Economics would like to know the preferred mode of delivery for classes next semester. The department sends out a google form asking students to participate. What type of sampling is this?"
+      "First, several towns were selected. Then 10 students were chosen from each selected town.",
+      "The Department of Economics sends out a Google Form asking students to participate. What type of sampling is this?"
     ];
 
     function loadExample(index) {
@@ -199,3 +214,4 @@
   </script>
 </body>
 </html>
+
