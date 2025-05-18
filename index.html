@@ -131,94 +131,133 @@
       <button class="example-btn" onclick="loadExample(0)">Example 1</button>
       <button class="example-btn" onclick="loadExample(1)">Example 2</button>
       <button class="example-btn" onclick="loadExample(2)">Example 3</button>
+      <button class="example-btn" onclick="loadExample(3)">Example 4</button>
+      <button class="example-btn" onclick="loadExample(4)">Example 5</button>
     </div>
 
     <div id="output" class="result"></div>
   </div>
 
   <script>
-    const examples = [
-      "The class was told to answer a question. Each student had the same chance to be picked.",
-      "The university is split into faculties. One student is selected from each faculty.",
-      "A population is divided into towns. Some towns are picked, and every person in those towns is surveyed."
-    ];
+const methods = [
+  {
+    name: "Voluntary Response Sample",
+    keywords: [
+      "volunteer", "volunteered", "self selected", "opted in", "chose to respond",
+      "decided to participate", "their choice", "not randomly selected", "responded on their own",
+      "anyone could participate", "self-selection"
+    ],
+    explanation: "This is a Voluntary Response Sample because participants self-selected—they chose to respond, not selected by the researcher."
+  },
+  {
+    name: "Simple Random Sampling",
+    keywords: [
+      "simple random", "random sample", "randomly selected", "no groups", "no grouping",
+      "from population to sample", "everyone has an equal opportunity", "entire population",
+      "randomly chosen individuals", "selected at random from the whole group",
+      "list of all", "selected from a list", "all members", "every individual had a chance"
+    ],
+    explanation: "This is Simple Random Sampling because every individual in the population had an equal chance of being selected, and no grouping was done."
+  },
+  {
+    name: "Stratified Random Sampling",
+    keywords: [
+      "strata", "stratified", "each group", "each faculty", "one from each group", "one from each",
+      "each stratum", "different groups selected", "divided into categories", "subgroups by characteristic",
+      "grouped by", "separated by", "distinct groups then sampled"
+    ],
+    explanation: "This is Stratified Random Sampling because the population was divided into distinct groups (strata) based on a characteristic, and samples were taken from each group."
+  },
+  {
+    name: "Multistage Random Sampling",
+    keywords: [
+      "multistage", "multiple stages", "divided into groups", "then divided again", "sampled from subgroup",
+      "some from subgroup", "grouped twice", "sample in two steps", "first select some groups then select within",
+      "selected at random from groups chosen at random", "several stages", "sampled in stages"
+    ],
+    explanation: "This is Multistage Random Sampling because sampling was conducted in two or more stages (e.g., groups were selected, then individuals within those groups were sampled)."
+  },
+  {
+    name: "Cluster Sampling",
+    keywords: [
+      "cluster", "divided into groups", "all selected from group", "everyone in group", "entire group selected",
+      "whole subgroup", "all members from subgroup", "cluster selected", "surveyed all in group", "all individuals from some groups"
+    ],
+    explanation: "This is Cluster Sampling because the population was divided into groups (clusters), and all individuals in selected clusters were surveyed."
+  }
+];
 
-    const methods = [
-      {
-        name: "Voluntary Response Sample",
-        keywords: [
-          "volunteered", "self selected", "opted in", "chose to respond", 
-          "decided to participate", "their choice", "not randomly selected"
-        ],
-        explanation: "This is a Voluntary Response Sample because you’re the one who self-selected to be part of the sample — it was your choice, and you weren’t randomly selected."
-      },
-      {
-        name: "Simple Random Sampling",
-        keywords: [
-          "equal chance", "random sample", "randomly selected", 
-          "no groups", "no grouping", "from population to sample", 
-          "everyone has an equal opportunity", "entire population", "randomly chosen individuals"
-        ],
-        explanation: "This is Simple Random Sampling because every individual or component in the population had an equal chance of being selected to form the sample. No grouping was done — we moved straight from the population to the sample."
-      },
-      {
-        name: "Stratified Random Sampling",
-        keywords: [
-          "divided once", "strata", "each group", "each faculty", 
-          "one from each group", "one from each", "each stratum", "different groups selected"
-        ],
-        explanation: "This is Stratified Random Sampling because the population was divided once into unique groups (strata), and then at least one individual or component from each group was selected to form the sample."
-      },
-      {
-        name: "Multistage Random Sampling",
-        keywords: [
-          "multiple stages", "divided into groups", "then divided again", 
-          "sampled from subgroup", "some from subgroup", "grouped twice", "multistage"
-        ],
-        explanation: "This is Multistage Random Sampling because the population was divided into groups more than once, and then some individuals or components were selected from the final subgroup to form the sample."
-      },
-      {
-        name: "Cluster Sampling",
-        keywords: [
-          "divided into groups", "all selected from group", 
-          "everyone in group", "entire group selected", "whole subgroup", 
-          "all members from subgroup", "cluster selected", "surveyed all in group"
-        ],
-        explanation: "This is Cluster Sampling because the population was divided into groups, and then all individuals or components from one or more subgroups were selected to form the sample."
-      }
-    ];
+// Enhanced pattern recognition for multi-stage and list-based scenarios
+function analyzeQuestion() {
+  const input = document.getElementById("question").value.toLowerCase();
+  const outputDiv = document.getElementById("output");
 
-    function analyzeQuestion() {
-      const input = document.getElementById("question").value.toLowerCase();
-      const outputDiv = document.getElementById("output");
+  // Special multistage detection: look for two-step sampling logic
+  if (
+    /(chosen|selected|picked) at random.*(from|among|within).*(chosen|selected|picked) at random/.test(input) ||
+    /(first|initially) (chosen|selected|picked).*then.*(chosen|selected|picked)/.test(input) ||
+    /(some|several) (groups|towns|schools|areas|locations|villages|communities) (were|are) (chosen|selected|picked) (at )?random.*(then|and next|and afterwards|followed by).*(children|individuals|students|people|members|participants) (were|are) (chosen|selected|picked) (at )?random/.test(input) ||
+    /(groups.*random.*then.*individuals.*random)|(random.*groups.*then.*random.*individuals)/.test(input)
+  ) {
+    outputDiv.innerHTML = `
+      <div class="method">Answer: Multistage Random Sampling</div>
+      <div class="explanation">This is Multistage Random Sampling because groups were selected at random, then individuals within those groups were also selected at random.</div>
+    `;
+    outputDiv.className = "result show";
+    return;
+  }
 
-      for (const method of methods) {
-        if (method.keywords.some(phrase => input.includes(phrase))) {
-          outputDiv.innerHTML = `
-            <div class="method">Answer: ${method.name}</div>
-            <div class="explanation">${method.explanation}</div>
-          `;
-          outputDiv.className = "result show";
-          return;
-        }
-      }
+  // Simple random sampling: detect "from a list of all", "select X from Y", etc.
+  if (
+    /from (a|the) list of all/.test(input) ||
+    /(randomly|at random) (choose|select|pick|draw) \d+ (students|children|people|individuals|participants|members) (from|out of) (the )?(total )?\d+/.test(input) ||
+    /(obtain|get|take) (a )?list of (all|every) (students|children|people|individuals|participants|members).*select(ed)? \d+ (at )?random/.test(input) ||
+    /(select|pick|choose) (a|some|several|many|few|random sample of) (students|children|people|individuals|participants|members) (at )?random (from|among|out of) (the )?(entire )?(population|group|list)/.test(input)
+  ) {
+    outputDiv.innerHTML = `
+      <div class="method">Answer: Simple Random Sampling</div>
+      <div class="explanation">This is Simple Random Sampling because the sample was selected at random from the entire population, with each individual having an equal chance of being chosen.</div>
+    `;
+    outputDiv.className = "result show";
+    return;
+  }
 
+  // Keyword-based fallback
+  for (const method of methods) {
+    if (method.keywords.some(phrase => input.includes(phrase))) {
       outputDiv.innerHTML = `
-        <div class="method">Answer: Unable to determine</div>
-        <div class="explanation">Please check the question for clarity or rephrase using sampling terminology.</div>
+        <div class="method">Answer: ${method.name}</div>
+        <div class="explanation">${method.explanation}</div>
       `;
       outputDiv.className = "result show";
+      return;
     }
+  }
 
-    function loadExample(index) {
-      document.getElementById("question").value = examples[index];
-      document.getElementById("output").className = "result";
-    }
+  // Fallback if nothing matches
+  outputDiv.innerHTML = `
+    <div class="method">Answer: Unable to determine</div>
+    <div class="explanation">Please check the question for clarity or rephrase using sampling terminology.</div>
+  `;
+  outputDiv.className = "result show";
+}
 
-    function toggleMode() {
-      document.body.classList.toggle("dark");
-    }
+const examples = [
+  "The class was told to answer a question. Each student had the same chance to be picked.",
+  "The university is split into faculties. One student is selected from each faculty.",
+  "A population is divided into towns. Some towns are picked, and every person in those towns is surveyed.",
+  "A study is being conducted to determine the average number of primary school children in rural St. Andrew who attend face-to-face sessions. Seven towns were chosen at random from a total of twenty. Forty children were then selected at random. What type of sampling method is being used?",
+  "The Department of Economics would like to know the preferred mode of delivery for classes next semester. They obtain a list of all 2000 students and select 100 from that list. What type of sampling Method is being used?"
+];
+
+function loadExample(index) {
+  document.getElementById("question").value = examples[index];
+  document.getElementById("output").className = "result";
+}
+
+function toggleMode() {
+  document.body.classList.toggle("dark");
+}
   </script>
 </body>
 </html>
-
