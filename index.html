@@ -49,8 +49,6 @@
       border-radius: 8px;
       border: 1px solid #ccc;
       resize: vertical;
-      background: var(--card);
-      color: var(--text);
     }
     button, .example-btn {
       margin-top: 1rem;
@@ -61,7 +59,6 @@
       font-size: 1rem;
       border-radius: 6px;
       cursor: pointer;
-      transition: background-color 0.3s;
     }
     button:hover, .example-btn:hover {
       background-color: #4a148c;
@@ -85,7 +82,6 @@
     .method {
       font-weight: bold;
       font-size: 1.2rem;
-      color: var(--accent);
     }
     .explanation {
       margin-top: 0.5rem;
@@ -103,17 +99,6 @@
     .example-btn {
       background-color: #9575cd;
     }
-    label {
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      gap: 0.5rem;
-    }
-    #modeToggle {
-      width: 17px;
-      height: 17px;
-    }
   </style>
 </head>
 <body>
@@ -121,10 +106,10 @@
   <div class="container">
     <div class="toggle">
       <label>
-        <input type="checkbox" id="modeToggle"> Dark Mode
+        <input type="checkbox" id="modeToggle" onchange="toggleMode()"> Dark Mode
       </label>
     </div>
-    <textarea id="question" placeholder="Type your sampling question here...">A corporation wants to determine if workers who work from home are more productive. They compiled a list of all 300 employees and classified them by educational level. Then they interviewed 20 persons from each category. What type of sampling method is being used?</textarea>
+    <textarea id="question" placeholder="Type your sampling question here..."></textarea>
     <button onclick="analyzeQuestion()">Get Sampling Method</button>
     <div class="examples">
       <button class="example-btn" onclick="loadExample(0)">Example 1</button>
@@ -133,10 +118,7 @@
       <button class="example-btn" onclick="loadExample(3)">Example 4</button>
       <button class="example-btn" onclick="loadExample(4)">Example 5</button>
     </div>
-    <div id="output" class="result show">
-      <div class="method">Answer: Stratified Random Sampling</div>
-      <div class="explanation">This is Stratified Random Sampling because the population was divided into educational level categories and 20 persons were interviewed from each category.</div>
-    </div>
+    <div id="output" class="result"></div>
   </div>
 
   <script>
@@ -145,7 +127,7 @@
         name: "Voluntary Response Sample",
         keywords: ["self-selected", "volunteer", "chose to respond", "google form", "opted in", "decided to participate"],
         scenarios: [
-          /(google\sform|form).*ask.*students.*participate/i,
+          /(google\s+form|form).*ask.*students.*participate/i,
           /students.*(asked|invited).*respond.*survey/i,
           /form.*optional/i
         ],
@@ -162,14 +144,12 @@
       },
       {
         name: "Stratified Random Sampling",
-        keywords: ["stratified", "strata", "grouped by", "divided into categories", "one from each", "each category", "from each"],
+        keywords: ["stratified", "strata", "grouped by", "divided into categories", "one from each"],
         scenarios: [
-          /(classified|divided|grouped).*by.*(educational level|group|category)/i,
-          /divided.*by.*(faculty|gender|age|group|level)/i,
-          /select.*(one|some|\d+).*from each (group|category|stratum)/i,
-          /interviewed.*\d+.*from each/i
+          /divided.*by.*(faculty|gender|age|group)/i,
+          /select.*(one|some).*from each group/i
         ],
-        explanation: "This is Stratified Random Sampling because the population was divided into distinct categories (strata) and a sample was taken from each category."
+        explanation: "This is Stratified Random Sampling because the population was divided once into unique groups and one or more individuals were selected from each."
       },
       {
         name: "Multistage Random Sampling",
@@ -194,25 +174,22 @@
     function analyzeQuestion() {
       const input = document.getElementById("question").value.toLowerCase();
       const outputDiv = document.getElementById("output");
-      
-      // Clear previous results
-      outputDiv.className = "result";
-      
-      if (!input.trim()) {
-        outputDiv.innerHTML = `<div class="method">Error: No input</div><div class="explanation">Please enter a question about sampling methods.</div>`;
+
+      // First check specifically for Voluntary Response Sample
+      const voluntaryResponseRegexes = [
+        /(google\s+form|form).*ask.*students.*participate/i,
+        /students.*(asked|invited).*respond.*survey/i,
+        /form.*optional/i
+      ];
+
+      if (voluntaryResponseRegexes.some(regex => regex.test(input))) {
+        const method = methods.find(m => m.name === "Voluntary Response Sample");
+        outputDiv.innerHTML = `<div class="method">Answer: ${method.name}</div><div class="explanation">${method.explanation}</div>`;
         outputDiv.className = "result show";
         return;
       }
 
-      // First check for exact matches to specific scenarios
-      if (/(classified|divided|grouped).*by.*(educational level|category).*(interviewed|selected).*\d+.*from each/i.test(input)) {
-        outputDiv.innerHTML = `<div class="method">Answer: Stratified Random Sampling</div>
-                              <div class="explanation">This is Stratified Random Sampling because the population was divided into educational level categories and samples were taken from each category.</div>`;
-        outputDiv.className = "result show";
-        return;
-      }
-
-      // Then check other methods
+      // Check other sampling methods
       for (const method of methods) {
         if (method.scenarios.some(regex => regex.test(input))) {
           outputDiv.innerHTML = `<div class="method">Answer: ${method.name}</div><div class="explanation">${method.explanation}</div>`;
@@ -246,24 +223,9 @@
       document.getElementById("output").className = "result";
     }
 
-    // Dark mode toggle functionality
-    const modeToggle = document.getElementById("modeToggle");
-    modeToggle.addEventListener("change", function() {
+    function toggleMode() {
       document.body.classList.toggle("dark");
-      // Save preference to localStorage
-      localStorage.setItem("darkMode", this.checked);
-    });
-
-    // Check for saved preference
-    if (localStorage.getItem("darkMode") === "true") {
-      document.body.classList.add("dark");
-      modeToggle.checked = true;
     }
-
-    // Initialize with the correct answer for the default question
-    window.onload = function() {
-      analyzeQuestion();
-    };
   </script>
 </body>
 </html>
