@@ -1,254 +1,463 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Sampling Smart Accessor</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sampling Method Identifier</title>
   <style>
     :root {
-      --bg: #ffffff;
-      --text: #333;
-      --card: #f9f9f9;
-      --accent: #4a148c;
-      --highlight: #ede7f6;
-      --hover-accent: #6a1b9a;
+      --primary: #6a1b9a;
+      --primary-light: #9c4dcc;
+      --secondary: #26a69a;
+      --background: #f5f5f5;
+      --card: #ffffff;
+      --text: #333333;
+      --text-light: #666666;
+      --border: #e0e0e0;
+      --success: #4caf50;
     }
 
-    body.dark {
-      --bg: #1e1e1e;
-      --text: #f5f5f5;
-      --card: #2d2d2d;
-      --accent: #bb86fc;
-      --highlight: #3a2a4d;
-      --hover-accent: #ce94ff;
+    body.dark-mode {
+      --primary: #bb86fc;
+      --primary-light: #d1a4ff;
+      --secondary: #03dac6;
+      --background: #121212;
+      --card: #1e1e1e;
+      --text: #e0e0e0;
+      --text-light: #b0b0b0;
+      --border: #333333;
+      --success: #66bb6a;
     }
 
     * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
     body {
-      margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: var(--bg);
+      background-color: var(--background);
       color: var(--text);
+      line-height: 1.6;
+      padding: 20px;
       transition: all 0.3s ease;
-    }
-
-    h1 {
-      text-align: center;
-      margin-top: 2rem;
-      color: var(--accent);
     }
 
     .container {
       max-width: 800px;
-      margin: 2rem auto;
-      padding: 2rem;
-      background: var(--card);
-      border-radius: 12px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-      transition: background 0.3s;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+      position: relative;
+    }
+
+    h1 {
+      color: var(--primary);
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: var(--text-light);
+      font-size: 1.1rem;
+    }
+
+    .toggle-container {
+      position: absolute;
+      top: 0;
+      right: 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 30px;
+      margin-left: 10px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--border);
+      transition: .4s;
+      border-radius: 34px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 22px;
+      width: 22px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: var(--primary);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(30px);
+    }
+
+    .card {
+      background-color: var(--card);
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 25px;
+      margin-bottom: 30px;
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--primary);
     }
 
     textarea {
       width: 100%;
-      min-height: 120px;
-      padding: 1rem;
-      font-size: 1rem;
+      min-height: 150px;
+      padding: 15px;
+      border: 1px solid var(--border);
       border-radius: 8px;
-      border: 1px solid #ccc;
+      font-family: inherit;
+      font-size: 16px;
       resize: vertical;
-      background: var(--highlight);
+      background-color: var(--card);
       color: var(--text);
-      transition: border 0.3s;
+      transition: border-color 0.3s;
     }
 
     textarea:focus {
       outline: none;
-      border-color: var(--accent);
+      border-color: var(--primary);
     }
 
-    button, .example-btn {
-      display: inline-block;
-      margin-top: 1rem;
-      background-color: var(--accent);
+    button {
+      background-color: var(--primary);
       color: white;
       border: none;
-      padding: 0.6rem 1.2rem;
-      font-size: 1rem;
-      border-radius: 6px;
+      padding: 12px 24px;
+      font-size: 16px;
+      border-radius: 8px;
       cursor: pointer;
-      transition: background 0.3s;
+      transition: background-color 0.3s;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    button:hover, .example-btn:hover {
-      background-color: var(--hover-accent);
+    button:hover {
+      background-color: var(--primary-light);
     }
 
-    .toggle {
-      text-align: right;
-      margin-bottom: 1rem;
-    }
-
-    .examples {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-top: 1rem;
-    }
-
-    .example-btn {
-      background-color: #9575cd;
+    button i {
+      margin-right: 8px;
     }
 
     .result {
-      margin-top: 2rem;
-      padding: 1.5rem;
-      border-radius: 8px;
-      background-color: var(--highlight);
-      border-left: 6px solid var(--accent);
-      opacity: 0;
-      transform: translateY(20px);
-      transition: all 0.4s ease-in-out;
       display: none;
+      margin-top: 30px;
+      padding: 20px;
+      border-radius: 8px;
+      background-color: rgba(106, 27, 154, 0.1);
+      border-left: 5px solid var(--primary);
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .result.show {
       display: block;
-      opacity: 1;
-      transform: translateY(0);
     }
 
-    .method {
-      font-weight: bold;
+    .method-name {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+
+    .method-explanation {
+      margin-bottom: 15px;
+    }
+
+    .examples-container {
+      margin-top: 30px;
+    }
+
+    .examples-title {
       font-size: 1.2rem;
+      color: var(--primary);
+      margin-bottom: 15px;
+      font-weight: 600;
     }
 
-    .explanation {
-      margin-top: 0.5rem;
-      line-height: 1.5;
+    .example-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .example-button {
+      background-color: var(--secondary);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      font-size: 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .example-button:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      color: var(--text-light);
+      font-size: 14px;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 15px;
+      }
+      
+      h1 {
+        font-size: 2rem;
+      }
+      
+      .toggle-container {
+        position: static;
+        justify-content: center;
+        margin-top: 15px;
+      }
     }
   </style>
 </head>
 <body>
-
-  <h1>Sampling Smart Accessor</h1>
-
   <div class="container">
-    <div class="toggle">
-      <label>
-        <input type="checkbox" id="modeToggle" onchange="toggleMode()"> Dark Mode
-      </label>
-    </div>
+    <header>
+      <h1>Sampling Method Identifier</h1>
+      <p class="subtitle">Determine the sampling method used in research scenarios</p>
+      <div class="toggle-container">
+        <span>Dark Mode</span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="darkModeToggle">
+          <span class="slider"></span>
+        </label>
+      </div>
+    </header>
 
-    <textarea id="question" placeholder="Type your sampling question here..."></textarea>
-    <button onclick="analyzeQuestion()">Get Sampling Method</button>
+    <main>
+      <div class="card">
+        <div class="input-group">
+          <label for="question">Enter your sampling question:</label>
+          <textarea id="question" placeholder="Example: A candy company wants to study the buying habits of its customers..."></textarea>
+        </div>
+        <button id="analyzeBtn" onclick="analyzeQuestion()">
+          <i>🔍</i> Analyze Sampling Method
+        </button>
+        
+        <div id="result" class="result">
+          <div class="method-name" id="methodName">Method Name</div>
+          <div class="method-explanation" id="methodExplanation">Explanation will appear here...</div>
+        </div>
+      </div>
 
-    <div class="examples">
-      <button class="example-btn" onclick="loadExample(0)">Example 1</button>
-      <button class="example-btn" onclick="loadExample(1)">Example 2</button>
-      <button class="example-btn" onclick="loadExample(2)">Example 3</button>
-      <button class="example-btn" onclick="loadExample(3)">Example 4</button>
-      <button class="example-btn" onclick="loadExample(4)">Example 5</button>
-    </div>
+      <div class="examples-container">
+        <h3 class="examples-title">Try these examples:</h3>
+        <div class="example-buttons">
+          <button class="example-button" onclick="loadExample(0)">Voluntary Response</button>
+          <button class="example-button" onclick="loadExample(1)">Simple Random</button>
+          <button class="example-button" onclick="loadExample(2)">Stratified</button>
+          <button class="example-button" onclick="loadExample(3)">Multistage</button>
+          <button class="example-button" onclick="loadExample(4)">Cluster</button>
+        </div>
+      </div>
+    </main>
 
-    <div id="output" class="result"></div>
+    <footer>
+      <p>Created for research methods students | Static website for GitHub deployment</p>
+    </footer>
   </div>
 
   <script>
+    // Sampling methods data
     const methods = [
       {
         name: "Voluntary Response Sample",
-        keywords: ["self-selected", "volunteer", "chose to respond", "google form", "opted in", "decided to participate"],
+        keywords: ["volunteer", "self-selected", "opted in", "chose to respond", "google form", "decided to participate"],
         scenarios: [
-          /(form|survey).*ask.*students.*participate/i,
-          /students.*(asked|invited).*respond.*survey/i,
-          /form.*optional/i
+          /(google\sform|form).*ask.*(students|participants).*participate/i,
+          /(students|participants).*(asked|invited).*respond.*survey/i,
+          /form.*optional/i,
+          /volunteer.*participate/i
         ],
-        explanation: "This is a Voluntary Response Sample because participants chose to respond — they were not randomly selected."
+        explanation: "This is a Voluntary Response Sample because participants chose to respond — they were not randomly selected. You're the one who self-selected to be part of the sample; it was your choice."
       },
       {
         name: "Simple Random Sampling",
-        keywords: ["random sample", "equal chance", "no groups", "entire population", "randomly selected individuals"],
+        keywords: ["random sample", "equal chance", "no groups", "entire population", "randomly selected"],
         scenarios: [
-          /random(ly)? (select|choose|pick|draw) (students|people) (from|out of) (all|entire|whole) group/i,
-          /everyone.*equal chance/i
+          /random(ly)? (select|choose|pick|draw) (students|people) (from|out of) (all|entire|whole) (population|group)/i,
+          /every (member|individual).*equal chance/i,
+          /no.*grouping.*done/i
         ],
-        explanation: "This is Simple Random Sampling because every individual in the population had an equal chance of being selected, with no grouping."
+        explanation: "This is Simple Random Sampling because every individual in the population has an equal chance of being selected to form the sample. No grouping is done in this method; we move straight from population to sample."
       },
       {
         name: "Stratified Random Sampling",
-        keywords: ["stratified", "strata", "grouped by", "divided into categories", "one from each"],
+        keywords: ["stratified", "strata", "grouped by", "divided into categories", "from each", "each category"],
         scenarios: [
-          /divided.*by.*(faculty|gender|age|group)/i,
-          /select.*(one|some).*from each group/i
+          /(classified|divided|grouped).*by.*(educational level|faculty|gender|age|group|category)/i,
+          /select.*(one|some|\d+).*from each (group|category|stratum)/i,
+          /interviewed.*\d+.*from each/i,
+          /divided.*once.*unique groups/i
         ],
-        explanation: "This is Stratified Random Sampling because the population was divided once into unique groups and one or more individuals were selected from each."
+        explanation: "This is Stratified Random Sampling because the population was divided once into unique groups (strata), and then we selected at least one individual from each group to form the sample."
       },
       {
         name: "Multistage Random Sampling",
         keywords: ["multiple stages", "select groups then individuals", "grouped twice", "sampled in steps"],
         scenarios: [
-          /first.*select.*(towns|schools|areas).*then.*(select|choose).*students/i,
-          /select.*groups.*then.*sample.*from each/i
+          /first.*select.*(towns|schools|areas).*then.*(select|choose).*(students|individuals)/i,
+          /select.*groups.*then.*sample.*from each/i,
+          /divided.*more than once/i
         ],
-        explanation: "This is Multistage Random Sampling because the population was divided more than once and individuals were sampled from final subgroups."
+        explanation: "This is Multistage Random Sampling because the population was divided into various groups in multiple stages, and then we selected some individuals from the final subgroups to form the sample."
       },
       {
         name: "Cluster Sampling",
         keywords: ["cluster", "group selected", "surveyed all in group", "entire group", "whole subgroup"],
         scenarios: [
           /divided.*groups.*select.*some.*survey all.*in those groups/i,
-          /select.*entire.*group.*and.*survey all/i
+          /select.*entire.*group.*and.*survey all/i,
+          /all.*members.*selected groups/i
         ],
-        explanation: "This is Cluster Sampling because the population was divided into groups, and all members of selected groups were surveyed."
+        explanation: "This is Cluster Sampling because the population was divided into groups (clusters), and then we selected all individuals from the chosen groups to form the sample."
       }
     ];
 
-    function analyzeQuestion() {
-      const input = document.getElementById("question").value.toLowerCase();
-      const outputDiv = document.getElementById("output");
+    // DOM elements
+    const questionInput = document.getElementById('question');
+    const resultDiv = document.getElementById('result');
+    const methodName = document.getElementById('methodName');
+    const methodExplanation = document.getElementById('methodExplanation');
+    const darkModeToggle = document.getElementById('darkModeToggle');
 
-      // Try exact regex match first
+    // Example questions
+    const examples = [
+      "The Department of Economics sends out a Google Form asking students to voluntarily participate in a survey about course delivery preferences. What sampling method is this?",
+      "A teacher writes all student names on slips of paper, puts them in a hat, and draws 10 names to answer questions. What sampling method is this?",
+      "A university wants to survey students. They divide the student population by faculty (Arts, Science, Engineering) and randomly select 20 students from each faculty. What sampling method is this?",
+      "A national study first randomly selects 10 counties, then randomly selects 5 schools from each county, then randomly selects 20 students from each school. What sampling method is this?",
+      "A researcher divides a city into neighborhoods, randomly selects 5 neighborhoods, and surveys every household in those neighborhoods. What sampling method is this?"
+    ];
+
+    // Analyze the question
+    function analyzeQuestion() {
+      const input = questionInput.value.trim().toLowerCase();
+      const outputDiv = resultDiv;
+      
+      // Clear previous results
+      outputDiv.className = "result";
+      
+      if (!input) {
+        methodName.textContent = "Error";
+        methodExplanation.textContent = "Please enter a question about sampling methods.";
+        outputDiv.className = "result show";
+        return;
+      }
+
+      // Check for specific scenarios first
       for (const method of methods) {
         if (method.scenarios.some(regex => regex.test(input))) {
-          outputDiv.innerHTML = `<div class="method">Answer: ${method.name}</div><div class="explanation">${method.explanation}</div>`;
-          outputDiv.classList.add('show');
+          displayResult(method.name, method.explanation);
           return;
         }
       }
 
-      // Then try keyword matching
+      // Then check for keywords
       for (const method of methods) {
-        if (method.keywords.some(word => input.includes(word.toLowerCase()))) {
-          outputDiv.innerHTML = `<div class="method">Answer: ${method.name}</div><div class="explanation">${method.explanation}</div>`;
-          outputDiv.classList.add('show');
+        if (method.keywords.some(word => input.includes(word))) {
+          displayResult(method.name, method.explanation);
           return;
         }
       }
 
-      // If nothing matched
-      outputDiv.innerHTML = `<div class="method">Answer: Unable to determine</div><div class="explanation">Please check the question for clarity or rephrase using sampling terminology.</div>`;
-      outputDiv.classList.add('show');
+      // If no match found
+      methodName.textContent = "Unable to determine";
+      methodExplanation.textContent = "Please check the question for clarity or rephrase using sampling terminology.";
+      outputDiv.className = "result show";
     }
 
-    const examples = [
-      "The lecturer asks the class to answer a question. Everyone has the same chance to be picked.",
-      "A university is split into faculties. One student is selected from each faculty.",
-      "A population is divided into towns. Some towns are picked, and everyone in those towns is surveyed.",
-      "First, several towns are selected. Then 10 students are chosen from each selected town.",
-      "The Department of Economics sends out a Google Form asking students to participate. What type of sampling is this?"
-    ];
+    // Display the result
+    function displayResult(name, explanation) {
+      methodName.textContent = name;
+      methodExplanation.textContent = explanation;
+      resultDiv.className = "result show";
+    }
 
+    // Load example questions
     function loadExample(index) {
-      document.getElementById("question").value = examples[index];
-      document.getElementById("output").classList.remove('show');
+      if (index >= 0 && index < examples.length) {
+        questionInput.value = examples[index];
+        resultDiv.className = "result";
+      }
     }
 
-    function toggleMode() {
-      document.body.classList.toggle("dark");
+    // Dark mode toggle
+    darkModeToggle.addEventListener('change', function() {
+      document.body.classList.toggle('dark-mode');
+      localStorage.setItem('darkMode', this.checked);
+    });
+
+    // Check for saved dark mode preference
+    if (localStorage.getItem('darkMode') === 'true') {
+      document.body.classList.add('dark-mode');
+      darkModeToggle.checked = true;
     }
+
+    // Initialize with first example
+    window.onload = function() {
+      questionInput.value = examples[0];
+    };
   </script>
 </body>
 </html>
