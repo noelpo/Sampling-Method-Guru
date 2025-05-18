@@ -130,11 +130,11 @@
           "whole subgroup", "all members from subgroup", "cluster selected", "surveyed all in group", "all individuals from some groups"
         ],
         scenarios: [
-          /(population|students|people|members|participants).*(divided|grouped).*(clusters|groups|blocks|classes|sections|teams).*(randomly|at random)? (choose|select|pick) (some|one|several|a few) (clusters|groups|blocks|classes|sections|teams).*(survey|study|select|pick|choose|question|ask) (all|everyone|every|each) (in|within|from) (the|those) (clusters|groups|blocks|classes|sections|teams)/,
-          /(some|one|several|a few) (clusters|groups|blocks|classes|sections|teams) (are|were) (chosen|selected|picked) (at )?random.*all (individuals|students|children|participants|members) (in|from|within) (those|the selected) (clusters|groups|blocks|classes|sections|teams) (are|were) (surveyed|studied|selected|picked|chosen|questioned|asked)/,
-          /select (entire|whole) (groups|clusters|blocks|classes|sections|teams)/,
-          /(entire|whole) (group|class|section|cluster|team) (is|was) (selected|picked|chosen)/,
-          /(pick|choose|select) (some|a few|several|one) (groups|classes|clusters|sections|teams), (survey|study|question|ask) everyone in (those|the selected)/
+          /(population|students|people|members|participants).*(divided|grouped).*(clusters|groups|blocks|classes|sections|teams).*(randomly|at random)? (choose|select|pick) (some|one|several|a few)/i,
+          /(some|one|several|a few) (clusters|groups|blocks|classes|sections|teams) (are|were) (chosen|selected|picked) (at )?random.*all (individuals|students|children|participants|members) (in|from) (those|these|the) (clusters|groups|blocks|classes|sections|teams)/i,
+          /select (entire|whole) (groups|clusters|blocks|classes|sections|teams)/i,
+          /(entire|whole) (group|class|section|cluster|team) (is|was) (selected|picked|chosen)/i,
+          /(pick|choose|select) (some|a few|several|one) (groups|classes|clusters|sections|teams), (survey|study|question|ask) everyone in (those|the selected)/i
         ],
         explanation: "This is Cluster Sampling because the population was divided into groups (clusters), and all individuals in selected clusters were surveyed."
       }
@@ -184,8 +184,8 @@
       "The class was told to answer a question. Each student had the same chance to be picked.",
       "The university is split into faculties. One student is selected from each faculty.",
       "A population is divided into towns. Some towns are picked, and every person in those towns is surveyed.",
-      "A study is being conducted to determine the average number of primary school children in rural St. Andrew who attend face-to-face sessions. Seven towns were chosen at random from a total of twenty, then 20 children were picked at random from each selected town.",
-      "The Department of Economics would like to know the preferred mode of delivery for classes next semester. The department sends out a google form asking students to participate. What type of sampling method is being used?"
+      "A study is being conducted to determine the average number of primary school children in rural St. Andrew who attend face-to-face sessions. Seven towns were chosen at random from a total of thirty-four towns. All the primary school children in each of the selected towns were surveyed.",
+      "The Department of Economics would like to know the preferred mode of delivery for classes next semester. The department sends out a google form asking students to participate. What type of sampling is this?"
     ];
 
     function loadExample(index) {
