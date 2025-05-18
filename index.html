@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sampling Smart Accessor</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --text: #333;
+      --card: #fff;
+      --accent: #6a1b9a;
+      --highlight: #f3e5f5;
+    }
+
+    body.dark {
+      --bg: #1e1e1e;
+      --text: #e0e0e0;
+      --card: #2c2c2c;
+      --accent: #bb86fc;
+      --highlight: #3a2a4d;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 2rem;
+      margin: 0;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    h1 {
+      text-align: center;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+      background: var(--card);
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+      transition: background 0.3s;
+    }
+
+    textarea {
+      width: 100%;
+      height: 150px;
+      padding: 1rem;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      resize: vertical;
+    }
+
+    button, .example-btn {
+      margin-top: 1rem;
+      background-color: var(--accent);
+      color: white;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      font-size: 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover, .example-btn:hover {
+      background-color: #4a148c;
+    }
+
+    .result {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      border-radius: 8px;
+      background-color: var(--highlight);
+      border-left: 6px solid var(--accent);
+      display: none;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.4s ease-in-out;
+    }
+
+    .result.show {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .method {
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+
+    .explanation {
+      margin-top: 0.5rem;
+    }
+
+    .toggle {
+      text-align: right;
+      margin-bottom: 1rem;
+    }
+
+    .examples {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .example-btn {
+      background-color: #9575cd;
+    }
+  </style>
+</head>
+<body>
+  <h1>Sampling Smart Accessor</h1>
+  <div class="container">
+    <div class="toggle">
+      <label>
+        <input type="checkbox" id="modeToggle" onchange="toggleMode()"> Dark Mode
+      </label>
+    </div>
+
+    <textarea id="question" placeholder="Type your sampling question here..."></textarea>
+    <button onclick="analyzeQuestion()">Get Sampling Method</button>
+
+    <div class="examples">
+      <button class="example-btn" onclick="loadExample(0)">Example 1</button>
+      <button class="example-btn" onclick="loadExample(1)">Example 2</button>
+      <button class="example-btn" onclick="loadExample(2)">Example 3</button>
+    </div>
+
+    <div id="output" class="result"></div>
+  </div>
+
+  <script>
+    const examples = [
+      "The class was told to answer a question. Each student had the same chance to be picked.",
+      "The university is split into faculties. One student is selected from each faculty.",
+      "A population is divided into towns. Some towns are picked, and every person in those towns is surveyed."
+    ];
+
+    const methods = [
+      {
+        name: "Voluntary Response Sample",
+        keywords: [
+          "volunteered", "self selected", "opted in", "chose to respond", 
+          "decided to participate", "their choice", "not randomly selected"
+        ],
+        explanation: "This is a Voluntary Response Sample because you’re the one who self-selected to be part of the sample — it was your choice, and you weren’t randomly selected."
+      },
+      {
+        name: "Simple Random Sampling",
+        keywords: [
+          "equal chance", "random sample", "randomly selected", 
+          "no groups", "no grouping", "from population to sample", 
+          "everyone has an equal opportunity", "entire population", "randomly chosen individuals"
+        ],
+        explanation: "This is Simple Random Sampling because every individual or component in the population had an equal chance of being selected to form the sample. No grouping was done — we moved straight from the population to the sample."
+      },
+      {
+        name: "Stratified Random Sampling",
+        keywords: [
+          "divided once", "strata", "each group", "each faculty", 
+          "one from each group", "one from each", "each stratum", "different groups selected"
+        ],
+        explanation: "This is Stratified Random Sampling because the population was divided once into unique groups (strata), and then at least one individual or component from each group was selected to form the sample."
+      },
+      {
+        name: "Multistage Random Sampling",
+        keywords: [
+          "multiple stages", "divided into groups", "then divided again", 
+          "sampled from subgroup", "some from subgroup", "grouped twice", "multistage"
+        ],
+        explanation: "This is Multistage Random Sampling because the population was divided into groups more than once, and then some individuals or components were selected from the final subgroup to form the sample."
+      },
+      {
+        name: "Cluster Sampling",
+        keywords: [
+          "divided into groups", "all selected from group", 
+          "everyone in group", "entire group selected", "whole subgroup", 
+          "all members from subgroup", "cluster selected", "surveyed all in group"
+        ],
+        explanation: "This is Cluster Sampling because the population was divided into groups, and then all individuals or components from one or more subgroups were selected to form the sample."
+      }
+    ];
+
+    function analyzeQuestion() {
+      const input = document.getElementById("question").value.toLowerCase();
+      const outputDiv = document.getElementById("output");
+
+      for (const method of methods) {
+        if (method.keywords.some(phrase => input.includes(phrase))) {
+          outputDiv.innerHTML = `
+            <div class="method">Answer: ${method.name}</div>
+            <div class="explanation">${method.explanation}</div>
+          `;
+          outputDiv.className = "result show";
+          return;
+        }
+      }
+
+      outputDiv.innerHTML = `
+        <div class="method">Answer: Unable to determine</div>
+        <div class="explanation">Please check the question for clarity or rephrase using sampling terminology.</div>
+      `;
+      outputDiv.className = "result show";
+    }
+
+    function loadExample(index) {
+      document.getElementById("question").value = examples[index];
+      document.getElementById("output").className = "result";
+    }
+
+    function toggleMode() {
+      document.body.classList.toggle("dark");
+    }
+  </script>
+</body>
+</html>
+
