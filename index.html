@@ -124,7 +124,7 @@
         <input type="checkbox" id="modeToggle"> Dark Mode
       </label>
     </div>
-    <textarea id="question" placeholder="Type your sampling question here...">The Department of Economics would like to know the preferred mode of delivery for classes next semester. The department sends out a google form asking students to participate. What type of sampling method is being used?</textarea>
+    <textarea id="question" placeholder="Type your sampling question here...">A corporation wants to determine if workers who work from home are more productive. They compiled a list of all 300 employees and classified them by educational level. Then they interviewed 20 persons from each category. What type of sampling method is being used?</textarea>
     <button onclick="analyzeQuestion()">Get Sampling Method</button>
     <div class="examples">
       <button class="example-btn" onclick="loadExample(0)">Example 1</button>
@@ -134,8 +134,8 @@
       <button class="example-btn" onclick="loadExample(4)">Example 5</button>
     </div>
     <div id="output" class="result show">
-      <div class="method">Answer: Voluntary Response Sample</div>
-      <div class="explanation">This is a Voluntary Response Sample because participants chose to respond — they were not randomly selected.</div>
+      <div class="method">Answer: Stratified Random Sampling</div>
+      <div class="explanation">This is Stratified Random Sampling because the population was divided into educational level categories and 20 persons were interviewed from each category.</div>
     </div>
   </div>
 
@@ -162,12 +162,14 @@
       },
       {
         name: "Stratified Random Sampling",
-        keywords: ["stratified", "strata", "grouped by", "divided into categories", "one from each"],
+        keywords: ["stratified", "strata", "grouped by", "divided into categories", "one from each", "each category", "from each"],
         scenarios: [
-          /divided.*by.*(faculty|gender|age|group)/i,
-          /select.*(one|some).*from each group/i
+          /(classified|divided|grouped).*by.*(educational level|group|category)/i,
+          /divided.*by.*(faculty|gender|age|group|level)/i,
+          /select.*(one|some|\d+).*from each (group|category|stratum)/i,
+          /interviewed.*\d+.*from each/i
         ],
-        explanation: "This is Stratified Random Sampling because the population was divided once into unique groups and one or more individuals were selected from each."
+        explanation: "This is Stratified Random Sampling because the population was divided into distinct categories (strata) and a sample was taken from each category."
       },
       {
         name: "Multistage Random Sampling",
@@ -192,7 +194,7 @@
     function analyzeQuestion() {
       const input = document.getElementById("question").value.toLowerCase();
       const outputDiv = document.getElementById("output");
-
+      
       // Clear previous results
       outputDiv.className = "result";
       
@@ -202,6 +204,15 @@
         return;
       }
 
+      // First check for exact matches to specific scenarios
+      if (/(classified|divided|grouped).*by.*(educational level|category).*(interviewed|selected).*\d+.*from each/i.test(input)) {
+        outputDiv.innerHTML = `<div class="method">Answer: Stratified Random Sampling</div>
+                              <div class="explanation">This is Stratified Random Sampling because the population was divided into educational level categories and samples were taken from each category.</div>`;
+        outputDiv.className = "result show";
+        return;
+      }
+
+      // Then check other methods
       for (const method of methods) {
         if (method.scenarios.some(regex => regex.test(input))) {
           outputDiv.innerHTML = `<div class="method">Answer: ${method.name}</div><div class="explanation">${method.explanation}</div>`;
