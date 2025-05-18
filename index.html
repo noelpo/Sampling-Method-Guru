@@ -288,7 +288,7 @@
       <div class="card">
         <div class="input-group">
           <label for="question">Enter your sampling question:</label>
-          <textarea id="question" placeholder="Example: A candy company wants to study the buying habits of its customers..."></textarea>
+          <textarea id="question" placeholder="Example: A researcher obtains a list of all students and randomly selects 100..."></textarea>
         </div>
         <button id="analyzeBtn" onclick="analyzeQuestion()">
           <i>🔍</i> Analyze Sampling Method
@@ -318,37 +318,39 @@
   </div>
 
   <script>
-    // Sampling methods data
+    // Enhanced sampling methods data with improved detection
     const methods = [
       {
         name: "Voluntary Response Sample",
         keywords: ["volunteer", "self-selected", "opted in", "chose to respond", "google form", "decided to participate"],
         scenarios: [
-          /(google\sform|form).*ask.*(students|participants).*participate/i,
-          /(students|participants).*(asked|invited).*respond.*survey/i,
-          /form.*optional/i,
-          /volunteer.*participate/i
+          /(google\sform|form|survey).*(ask|invite).*(students|participants).*(participate|respond)/i,
+          /(students|participants).*(asked|invited).*(voluntarily|optional).*respond/i,
+          /volunteer.*participate/i,
+          /self-select.*sample/i
         ],
         explanation: "This is a Voluntary Response Sample because participants chose to respond — they were not randomly selected. You're the one who self-selected to be part of the sample; it was your choice."
       },
       {
         name: "Simple Random Sampling",
-        keywords: ["random sample", "equal chance", "no groups", "entire population", "randomly selected"],
+        keywords: ["random sample", "equal chance", "no groups", "entire population", "randomly selected", "selected from list"],
         scenarios: [
-          /random(ly)? (select|choose|pick|draw) (students|people) (from|out of) (all|entire|whole) (population|group)/i,
+          /(randomly|random) (select|choose|pick|draw) (\d+|some|several) (students|people|individuals) (from|out of) (all|entire|complete) (list|population)/i,
+          /obtain.*list.*select.*\d+/i,
           /every (member|individual).*equal chance/i,
-          /no.*grouping.*done/i
+          /no.*grouping.*done/i,
+          /select.*from.*list.*without.*group/i
         ],
-        explanation: "This is Simple Random Sampling because every individual in the population has an equal chance of being selected to form the sample. No grouping is done in this method; we move straight from population to sample."
+        explanation: "This is Simple Random Sampling because every individual in the population had an equal chance of being selected to form the sample. The researcher obtained a complete list and randomly selected participants without any grouping or stratification."
       },
       {
         name: "Stratified Random Sampling",
         keywords: ["stratified", "strata", "grouped by", "divided into categories", "from each", "each category"],
         scenarios: [
-          /(classified|divided|grouped).*by.*(educational level|faculty|gender|age|group|category)/i,
-          /select.*(one|some|\d+).*from each (group|category|stratum)/i,
-          /interviewed.*\d+.*from each/i,
-          /divided.*once.*unique groups/i
+          /(classified|divided|grouped|stratified).*by.*(educational level|faculty|gender|age|group|category|strata)/i,
+          /select.*(one|some|\d+).*from each (group|category|stratum|division)/i,
+          /divided.*once.*unique groups/i,
+          /ensure.*representation.*from.*each/i
         ],
         explanation: "This is Stratified Random Sampling because the population was divided once into unique groups (strata), and then we selected at least one individual from each group to form the sample."
       },
@@ -356,9 +358,10 @@
         name: "Multistage Random Sampling",
         keywords: ["multiple stages", "select groups then individuals", "grouped twice", "sampled in steps"],
         scenarios: [
-          /first.*select.*(towns|schools|areas).*then.*(select|choose).*(students|individuals)/i,
+          /first.*select.*(towns|schools|areas|regions).*then.*(select|choose).*(students|individuals)/i,
           /select.*groups.*then.*sample.*from each/i,
-          /divided.*more than once/i
+          /divided.*more than once/i,
+          /two-stage|multi-stage/i
         ],
         explanation: "This is Multistage Random Sampling because the population was divided into various groups in multiple stages, and then we selected some individuals from the final subgroups to form the sample."
       },
@@ -368,7 +371,8 @@
         scenarios: [
           /divided.*groups.*select.*some.*survey all.*in those groups/i,
           /select.*entire.*group.*and.*survey all/i,
-          /all.*members.*selected groups/i
+          /all.*members.*selected groups/i,
+          /choose.*clusters.*study.*everyone/i
         ],
         explanation: "This is Cluster Sampling because the population was divided into groups (clusters), and then we selected all individuals from the chosen groups to form the sample."
       }
@@ -381,50 +385,75 @@
     const methodExplanation = document.getElementById('methodExplanation');
     const darkModeToggle = document.getElementById('darkModeToggle');
 
-    // Example questions
+    // Example questions including the one from your image
     const examples = [
       "The Department of Economics sends out a Google Form asking students to voluntarily participate in a survey about course delivery preferences. What sampling method is this?",
-      "A teacher writes all student names on slips of paper, puts them in a hat, and draws 10 names to answer questions. What sampling method is this?",
+      "The Department of Economics would like to know the preferred mode of delivery for classes next semester. They obtain a list of all 2000 students and select 100 from that list. What type of sampling Method is being used?",
       "A university wants to survey students. They divide the student population by faculty (Arts, Science, Engineering) and randomly select 20 students from each faculty. What sampling method is this?",
       "A national study first randomly selects 10 counties, then randomly selects 5 schools from each county, then randomly selects 20 students from each school. What sampling method is this?",
       "A researcher divides a city into neighborhoods, randomly selects 5 neighborhoods, and surveys every household in those neighborhoods. What sampling method is this?"
     ];
 
-    // Analyze the question
+    // Enhanced analysis function
     function analyzeQuestion() {
-      const input = questionInput.value.trim().toLowerCase();
+      const input = questionInput.value.trim();
       const outputDiv = resultDiv;
       
       // Clear previous results
       outputDiv.className = "result";
       
       if (!input) {
-        methodName.textContent = "Error";
-        methodExplanation.textContent = "Please enter a question about sampling methods.";
-        outputDiv.className = "result show";
+        displayResult("Error", "Please enter a question about sampling methods.");
         return;
       }
 
-      // Check for specific scenarios first
+      const inputLower = input.toLowerCase();
+
+      // Check for specific scenarios first with more precise matching
       for (const method of methods) {
-        if (method.scenarios.some(regex => regex.test(input))) {
-          displayResult(method.name, method.explanation);
-          return;
+        for (const pattern of method.scenarios) {
+          if (pattern.test(inputLower)) {
+            displayResult(method.name, method.explanation);
+            return;
+          }
         }
       }
 
-      // Then check for keywords
+      // Then check for keywords with context
       for (const method of methods) {
-        if (method.keywords.some(word => input.includes(word))) {
-          displayResult(method.name, method.explanation);
-          return;
+        for (const keyword of method.keywords) {
+          if (inputLower.includes(keyword)) {
+            // Additional context checks for simple random sampling
+            if (method.name === "Simple Random Sampling") {
+              if (!inputLower.includes("group") && 
+                  !inputLower.includes("category") && 
+                  !inputLower.includes("strata")) {
+                displayResult(method.name, method.explanation);
+                return;
+              }
+            } else {
+              displayResult(method.name, method.explanation);
+              return;
+            }
+          }
         }
+      }
+
+      // Special case for simple random when selecting from a list
+      if (/(obtain|have|get).*list.*(select|choose|pick).*\d+/i.test(inputLower) && 
+          !inputLower.includes("group") && !inputLower.includes("category") && !inputLower.includes("strata")) {
+        displayResult(
+          "Simple Random Sampling", 
+          "This is Simple Random Sampling because the researcher obtained a complete list of the population and randomly selected participants without any grouping or stratification."
+        );
+        return;
       }
 
       // If no match found
-      methodName.textContent = "Unable to determine";
-      methodExplanation.textContent = "Please check the question for clarity or rephrase using sampling terminology.";
-      outputDiv.className = "result show";
+      displayResult(
+        "Unable to determine", 
+        "Please check the question for clarity or rephrase using sampling terminology. Make sure to include details about how the sample was selected."
+      );
     }
 
     // Display the result
@@ -454,9 +483,9 @@
       darkModeToggle.checked = true;
     }
 
-    // Initialize with first example
+    // Initialize with the example from your image
     window.onload = function() {
-      questionInput.value = examples[0];
+      questionInput.value = examples[1]; // The simple random sampling example
     };
   </script>
 </body>
