@@ -16,7 +16,6 @@
       --border: #e0e0e0;
       --success: #4caf50;
     }
-
     body.dark-mode {
       --primary: #bb86fc;
       --primary-light: #d1a4ff;
@@ -28,13 +27,11 @@
       --border: #333333;
       --success: #66bb6a;
     }
-
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
-
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: var(--background);
@@ -43,30 +40,25 @@
       padding: 20px;
       transition: all 0.3s ease;
     }
-
     .container {
       max-width: 800px;
       margin: 0 auto;
       padding: 20px;
     }
-
     header {
       text-align: center;
       margin-bottom: 30px;
       position: relative;
     }
-
     h1 {
       color: var(--primary);
       font-size: 2.5rem;
       margin-bottom: 10px;
     }
-
     .subtitle {
       color: var(--text-light);
       font-size: 1.1rem;
     }
-
     .toggle-container {
       position: absolute;
       top: 0;
@@ -74,7 +66,6 @@
       display: flex;
       align-items: center;
     }
-
     .toggle-switch {
       position: relative;
       display: inline-block;
@@ -82,13 +73,11 @@
       height: 30px;
       margin-left: 10px;
     }
-
     .toggle-switch input {
       opacity: 0;
       width: 0;
       height: 0;
     }
-
     .slider {
       position: absolute;
       cursor: pointer;
@@ -100,7 +89,6 @@
       transition: .4s;
       border-radius: 34px;
     }
-
     .slider:before {
       position: absolute;
       content: "";
@@ -112,15 +100,12 @@
       transition: .4s;
       border-radius: 50%;
     }
-
     input:checked + .slider {
       background-color: var(--primary);
     }
-
     input:checked + .slider:before {
       transform: translateX(30px);
     }
-
     .card {
       background-color: var(--card);
       border-radius: 10px;
@@ -128,37 +113,30 @@
       padding: 25px;
       margin-bottom: 30px;
     }
-
     .input-group {
       margin-bottom: 20px;
     }
-
     label {
       display: block;
       margin-bottom: 8px;
       font-weight: 600;
       color: var(--primary);
     }
-
     textarea {
       width: 100%;
       min-height: 150px;
       padding: 15px;
       border: 1px solid var(--border);
       border-radius: 8px;
-      font-family: inherit;
-      font-size: 16px;
       resize: vertical;
       background-color: var(--card);
       color: var(--text);
       transition: border-color 0.3s;
     }
-
     textarea:focus {
       outline: none;
       border-color: var(--primary);
     }
-
     button {
       background-color: var(--primary);
       color: white;
@@ -173,15 +151,12 @@
       align-items: center;
       justify-content: center;
     }
-
     button:hover {
       background-color: var(--primary-light);
     }
-
     button i {
       margin-right: 8px;
     }
-
     .result {
       display: none;
       margin-top: 30px;
@@ -191,27 +166,22 @@
       border-left: 5px solid var(--primary);
       animation: fadeIn 0.5s ease-out;
     }
-
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
     }
-
     .result.show {
       display: block;
     }
-
     .method-name {
       font-size: 1.5rem;
       font-weight: 700;
       color: var(--primary);
       margin-bottom: 10px;
     }
-
     .method-explanation {
       margin-bottom: 15px;
     }
-
     .confidence-meter {
       margin-top: 10px;
       height: 5px;
@@ -219,38 +189,32 @@
       border-radius: 3px;
       overflow: hidden;
     }
-
     .confidence-bar {
       height: 100%;
       background: var(--primary);
       width: 0%;
       transition: width 0.5s ease;
     }
-
     .confidence-text {
       font-size: 0.8rem;
       color: var(--text-light);
       margin-top: 3px;
     }
-
     .examples-container {
       margin-top: 30px;
     }
-
     .examples-title {
       font-size: 1.2rem;
       color: var(--primary);
       margin-bottom: 15px;
       font-weight: 600;
     }
-
     .example-buttons {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
       margin-bottom: 20px;
     }
-
     .example-button {
       background-color: var(--secondary);
       color: white;
@@ -261,28 +225,20 @@
       cursor: pointer;
       transition: all 0.3s;
     }
-
     .example-button:hover {
       opacity: 0.9;
       transform: translateY(-2px);
     }
-
     footer {
       text-align: center;
       margin-top: 40px;
       color: var(--text-light);
       font-size: 14px;
     }
-
     @media (max-width: 768px) {
-      .container {
-        padding: 15px;
-      }
-      
       h1 {
         font-size: 2rem;
       }
-      
       .toggle-container {
         position: static;
         justify-content: center;
@@ -304,7 +260,6 @@
         </label>
       </div>
     </header>
-
     <main>
       <div class="card">
         <div class="input-group">
@@ -314,7 +269,6 @@
         <button id="analyzeBtn" onclick="analyzeQuestion()">
           <i>🔍</i> Analyze Sampling Method
         </button>
-        
         <div id="result" class="result">
           <div class="method-name" id="methodName">Method Name</div>
           <div class="method-explanation" id="methodExplanation">Explanation will appear here...</div>
@@ -324,7 +278,6 @@
           <div class="confidence-text" id="confidenceText">Confidence: 0%</div>
         </div>
       </div>
-
       <div class="examples-container">
         <h3 class="examples-title">Try these examples:</h3>
         <div class="example-buttons">
@@ -336,29 +289,33 @@
         </div>
       </div>
     </main>
-
     <footer>
       <p> ECON1005 STUDENTS | NO LIMITS TUTORIAL SERVICE </p>
     </footer>
   </div>
 
   <script>
-    // Enhanced Natural Language Matching System
+    // Synonyms dictionary
+    const synonyms = {
+      "chose": ["opted", "selected", "picked"],
+      "select": ["sample", "choose", "pick"],
+      "group": ["strata", "cluster", "category", "stratum"],
+      "randomly": ["random", "at random"]
+    };
+
+    function expandSynonyms(text) {
+      let expanded = text;
+      Object.entries(synonyms).forEach(([key, values]) => {
+        values.forEach(val => {
+          const regex = new RegExp(`\\b${val}\\b`, "gi");
+          expanded = expanded.replace(regex, key);
+        });
+      });
+      return expanded;
+    }
+
     class SamplingMethodClassifier {
       constructor() {
-        this.methods = [
-          "Voluntary Response Sample",
-          "Simple Random Sampling", 
-          "Stratified Random Sampling",
-          "Multistage Random Sampling",
-          "Cluster Sampling"
-        ];
-        
-        this.questionBank = [];
-        this.initializeQuestionBank();
-      }
-      
-      initializeQuestionBank() {
         this.questionBank = [
           {
             question: "The Commuting Students Association (CSA) wants to determine the most frequent mode of transportation to campus. They grouped all the commuting students according to their faculties and interviewed 500 students from each faculty. What type of sampling method was used?",
@@ -396,7 +353,7 @@
             explanation: "This is Cluster Sampling because groups (clusters) were randomly selected and ALL members of those groups were surveyed."
           },
           {
-            question: "A bank wants to conduct a client satisfaction survey. Their customers either have chequing accounts, savings accounts or both. They select twenty customers with only have checking accounts, ten customers with only savings accounts, and five customers with both types of account are chosen at random. What type of sampling method is being used?",
+            question: "A bank wants to conduct a client satisfaction survey. Their customers either have chequing accounts, savings accounts or both. They select twenty customers with only checking accounts, ten customers with only savings accounts, and five customers with both types of account are chosen at random. What type of sampling method is being used?",
             method: "Stratified Random Sampling",
             explanation: "This is Stratified Random Sampling because customers were divided into account type groups (strata) and then sampled from each group."
           },
@@ -411,255 +368,90 @@
             explanation: "This is Multistage Random Sampling because the selection process occurred in multiple stages (first locations, then team members within locations)."
           }
         ];
+        this.weightedKeywords = {
+          "group": 0.2,
+          "strata": 0.2,
+          "stage": 0.15,
+          "cluster": 0.2,
+          "each group": 0.15,
+          "entire group": 0.15,
+          "random": 0.15
+        };
       }
-      
-      findBestMatch(input) {
-        const cleanInput = this.normalizeText(input);
-        
-        // 1. First try exact matches from question bank
-        const exactMatch = this.questionBank.find(item => 
-          this.normalizeText(item.question) === cleanInput
-        );
-        if (exactMatch) {
+
+      analyze(input) {
+        const normalized = expandSynonyms(input.toLowerCase());
+
+        // Pattern Matching
+        if (/self-selected|volunteer|opt(ed)? in|google form/.test(normalized)) {
           return {
-            ...exactMatch,
-            confidence: 1.0,
-            source: 'exact'
-          };
-        }
-        
-        // 2. Try similar questions from bank
-        const bankMatch = this.findBankMatch(cleanInput);
-        if (bankMatch && bankMatch.similarity > 0.85) {
-          return {
-            ...bankMatch,
-            confidence: bankMatch.similarity,
-            source: 'bank'
-          };
-        }
-        
-        // 3. Apply enhanced pattern matching
-        const patternMatch = this.patternMatch(cleanInput);
-        if (patternMatch) {
-          // Boost confidence if bank match agrees
-          const finalConfidence = bankMatch ? 
-            Math.min(1, patternMatch.confidence * 1.1) : 
-            patternMatch.confidence;
-            
-          return {
-            ...patternMatch,
-            confidence: finalConfidence,
-            source: bankMatch ? 'hybrid' : 'pattern'
-          };
-        }
-        
-        // 4. Return best bank match if exists (even if low confidence)
-        if (bankMatch) {
-          return {
-            ...bankMatch,
-            confidence: bankMatch.similarity * 0.9,
-            source: 'bank'
-          };
-        }
-        
-        return null;
-      }
-      
-      normalizeText(text) {
-        return text.toLowerCase()
-          .replace(/[^\w\s]/g, '')
-          .replace(/\s+/g, ' ')
-          .trim();
-      }
-      
-      findBankMatch(input) {
-        let bestMatch = null;
-        let highestSimilarity = 0;
-        
-        for (const item of this.questionBank) {
-          const cleanQuestion = this.normalizeText(item.question);
-          const similarity = this.calculateSimilarity(input, cleanQuestion);
-          
-          if (similarity > highestSimilarity) {
-            highestSimilarity = similarity;
-            bestMatch = {
-              method: item.method,
-              explanation: item.explanation,
-              similarity
-            };
-          }
-        }
-        
-        return bestMatch;
-      }
-      
-      patternMatch(input) {
-        // Enhanced patterns with clear differentiation
-        const patterns = [
-          {
             method: "Voluntary Response Sample",
-            regex: /(volunteer|self-select|opt in|google form|decide to participate|send.*opinions|phone in|complete.*survey)/i,
             explanation: "This is a Voluntary Response Sample because participants chose whether to respond.",
-            confidence: 0.85
-          },
-          {
+            confidence: 0.9
+          };
+        } else if (/randomly? select.*from entire population/.test(normalized)) {
+          return {
             method: "Simple Random Sampling",
-            regex: /(randomly select|random sample|selected at random).*(from|of|among).*(entire|whole|complete|all)(?!.*group|.*faculty|.*department)/i,
             explanation: "This is Simple Random Sampling because individuals were selected randomly from the entire population without any grouping.",
             confidence: 0.9
-          },
-          {
+          };
+        } else if (/grouped by|divided into strata|from each group/.test(normalized)) {
+          return {
             method: "Stratified Random Sampling",
-            regex: /(grouped|divided|classified|stratified).*(by|according to).*(faculty|department|major|program|gender|age|strata|group).*(select|sample|interview).*(from each|per group)/i,
-            explanation: "This is Stratified Random Sampling because the population was first divided into groups (strata), and then individuals were randomly selected from each group.",
-            confidence: 0.93
-          },
-          {
+            explanation: "This is Stratified Random Sampling because the population was divided into groups (strata), and then individuals were selected from each group.",
+            confidence: 0.95
+          };
+        } else if (/multiple stages|first.*then.*select/.test(normalized)) {
+          return {
             method: "Multistage Random Sampling",
-            regex: /(select.*groups?.*then.*select.*individuals|multiple.*stages.*selection|first.*select.*then.*select|two-stage|multi-stage|county.*school.*grade.*student)/i,
             explanation: "This is Multistage Random Sampling because selection occurred in multiple stages with random selection at each stage.",
-            confidence: 0.91
-          },
-          {
+            confidence: 0.93
+          };
+        } else if (/select.*all.*in groups/.test(normalized)) {
+          return {
             method: "Cluster Sampling",
-            regex: /(select.*groups?.*survey all|all.*in selected|every.*in chosen|entire.*selected groups)/i,
             explanation: "This is Cluster Sampling because groups (clusters) were randomly selected and ALL members of those groups were surveyed.",
             confidence: 0.92
-          }
-        ];
-        
-        // Special case for faculty grouping
-        if (input.includes("group") && input.includes("facult") && input.includes("from each")) {
+          };
+        } else {
           return {
-            method: "Stratified Random Sampling",
-            explanation: "This is Stratified Random Sampling because the population was first divided into faculty groups (strata), and then students were randomly selected from each faculty group.",
-            confidence: 0.96
+            method: "Unable to determine",
+            explanation: "Please check the question for clarity or rephrase using sampling terminology.",
+            confidence: 0
           };
         }
-        
-        // Special case for multistage education example
-        if (input.includes("county") && input.includes("school") && input.includes("grade") && input.includes("student")) {
-          return {
-            method: "Multistage Random Sampling",
-            explanation: "This is Multistage Random Sampling because selection occurred in multiple stages (counties → schools → grades → students) with random selection at each stage.",
-            confidence: 0.97
-          };
-        }
-        
-        for (const pattern of patterns) {
-          if (pattern.regex.test(input)) {
-            return pattern;
-          }
-        }
-        
-        return null;
-      }
-      
-      calculateSimilarity(s1, s2) {
-        // Simple word overlap similarity with key term boosting
-        const words1 = new Set(s1.split(' '));
-        const words2 = s2.split(' ');
-        
-        // Key terms that boost similarity
-        const keyTerms = ['faculty', 'department', 'group', 'strata', 'county', 
-                         'school', 'grade', 'select', 'random', 'sample'];
-        
-        let matches = 0;
-        let keyTermMatches = 0;
-        
-        for (const word of words2) {
-          if (words1.has(word)) {
-            matches++;
-            if (keyTerms.includes(word)) keyTermMatches++;
-          }
-        }
-        
-        // Boost similarity for key term matches
-        const baseSimilarity = matches / Math.max(words1.size, words2.length);
-        const boostedSimilarity = Math.min(1, baseSimilarity + (keyTermMatches * 0.1));
-        
-        return boostedSimilarity;
       }
     }
 
-    // Initialize classifier
     const classifier = new SamplingMethodClassifier();
-    
-    // DOM elements
-    const questionInput = document.getElementById('question');
-    const resultDiv = document.getElementById('result');
-    const methodName = document.getElementById('methodName');
-    const methodExplanation = document.getElementById('methodExplanation');
-    const confidenceBar = document.getElementById('confidenceBar');
-    const confidenceText = document.getElementById('confidenceText');
-    const darkModeToggle = document.getElementById('darkModeToggle');
-
-    // Example questions for the buttons
-    const examples = [
-      // Voluntary Response
-      "The Department of Economics would like to know the preferred mode of delivery for classes next semester. The department sends out a google form asking students to participate. What type of sampling method is being used?",
-      
-      // Simple Random
-      "The Department of Economics would like to know the preferred mode of delivery for classes next semester. They obtain a list of all 2000 students and select 100 from that list. What type of sampling Method is being used?",
-      
-      // Stratified
-      "The Commuting Students Association (CSA) wants to determine the most frequent mode of transportation to campus. They grouped all the commuting students according to their faculties and interviewed 500 students from each faculty. What type of sampling method was used?",
-      
-      // Multistage
-      "The Ministry of Education would like to determine how the high school students island-wide are coping with their online studies during the COVID-19 pandemic. They randomly select 2 high schools from each county to participate in the survey. From each selected school, 15 randomly selected students from two randomly selected grades are included in the sample. What type of sample was taken?",
-      
-      // Cluster
-      "7Krave bearers in Kingston are divided into four groups. They randomly select 2 groups and interviewed all riders in each group to determine whether they have been robbed in the last two months. What type of sampling method is being used?"
-    ];
 
     function analyzeQuestion() {
-      const input = questionInput.value.trim();
-      
-      if (!input) {
-        displayResult("Error", "Please enter a question about sampling methods.", 0);
-        return;
-      }
+      const input = document.getElementById("question").value.trim();
+      const result = classifier.analyze(input);
 
-      const result = classifier.findBestMatch(input);
-      
-      if (result) {
-        displayResult(result.method, result.explanation, result.confidence);
-      } else {
-        displayResult(
-          "Unable to determine",
-          "Please check the question for clarity or rephrase using sampling terminology.",
-          0
-        );
-      }
-    }
-
-    function displayResult(name, explanation, confidence = 1) {
-      methodName.textContent = name;
-      methodExplanation.textContent = explanation;
-      
-      // Update confidence meter
-      const confidencePercent = Math.round(confidence * 100);
-      confidenceBar.style.width = `${confidencePercent}%`;
-      
-      let confidenceLevel;
-      if (confidencePercent >= 90) confidenceLevel = 'very high';
-      else if (confidencePercent >= 80) confidenceLevel = 'high';
-      else if (confidencePercent >= 70) confidenceLevel = 'moderate';
-      else if (confidencePercent >= 50) confidenceLevel = 'low';
-      else confidenceLevel = 'very low';
-      
-      confidenceText.textContent = `Confidence: ${confidencePercent}% (${confidenceLevel})`;
-      resultDiv.className = "result show";
+      document.getElementById("methodName").innerText = result.method;
+      document.getElementById("methodExplanation").innerText = result.explanation;
+      document.getElementById("confidenceText").innerText = `Confidence: ${(result.confidence * 100).toFixed(0)}%`;
+      document.getElementById("confidenceBar").style.width = `${result.confidence * 100}%`;
+      document.getElementById("result").classList.add("show");
     }
 
     function loadExample(index) {
+      const examples = [
+        "The Department of Economics would like to know the preferred mode of delivery for classes next semester. The department sends out a google form asking students to participate. What type of sampling method is being used?",
+        "The Department of Economics would like to know the preferred mode of delivery for classes next semester. They obtain a list of all 2000 students and select 100 from that list. What type of sampling Method is being used?",
+        "The Commuting Students Association (CSA) wants to determine the most frequent mode of transportation to campus. They grouped all the commuting students according to their faculties and interviewed 500 students from each faculty. What type of sampling method was used?",
+        "The Ministry of Education would like to determine how the high school students island-wide are coping with their online studies during the COVID-19 pandemic. They randomly select 2 high schools from each county to participate in the survey. From each selected school, 15 randomly selected students from two randomly selected grades are included in the sample. What type of sample was taken?",
+        "7Krave bearers in Kingston are divided into four groups. They randomly select 2 groups and interviewed all riders in each group to determine whether they have been robbed in the last two months. What type of sampling method is being used?"
+      ];
       if (index >= 0 && index < examples.length) {
-        questionInput.value = examples[index];
-        resultDiv.className = "result";
+        document.getElementById("question").value = examples[index];
+        document.getElementById("result").className = "result";
       }
     }
 
     // Dark mode toggle
+    const darkModeToggle = document.getElementById('darkModeToggle');
     darkModeToggle.addEventListener('change', function() {
       document.body.classList.toggle('dark-mode');
       localStorage.setItem('darkMode', this.checked);
@@ -673,7 +465,8 @@
 
     // Initialize with a stratified example
     window.onload = function() {
-      questionInput.value = examples[2]; // Stratified example
+      document.getElementById("question").value = 
+        "The Commuting Students Association (CSA) wants to determine the most frequent mode of transportation to campus. They grouped all the commuting students according to their faculties and interviewed 500 students from each faculty. What type of sampling method was used?";
     };
   </script>
 </body>
