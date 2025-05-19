@@ -212,6 +212,27 @@
       margin-bottom: 15px;
     }
 
+    .confidence-meter {
+      margin-top: 10px;
+      height: 5px;
+      background: #e0e0e0;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .confidence-bar {
+      height: 100%;
+      background: var(--primary);
+      width: 0%;
+      transition: width 0.5s ease;
+    }
+
+    .confidence-text {
+      font-size: 0.8rem;
+      color: var(--text-light);
+      margin-top: 3px;
+    }
+
     .examples-container {
       margin-top: 30px;
     }
@@ -297,6 +318,10 @@
         <div id="result" class="result">
           <div class="method-name" id="methodName">Method Name</div>
           <div class="method-explanation" id="methodExplanation">Explanation will appear here...</div>
+          <div class="confidence-meter">
+            <div class="confidence-bar" id="confidenceBar"></div>
+          </div>
+          <div class="confidence-text" id="confidenceText">Confidence: 0%</div>
         </div>
       </div>
 
@@ -318,152 +343,337 @@
   </div>
 
   <script>
-    // Enhanced sampling methods data with improved detection
-    const methods = [
-      {
-        name: "Voluntary Response Sample",
-        keywords: ["volunteer", "self-selected", "opted in", "chose to respond", "google form", "decided to participate"],
-        scenarios: [
-          /(google\sform|form|survey).*(ask|invite).*(students|participants).*(participate|respond)/i,
-          /(students|participants).*(asked|invited).*(voluntarily|optional).*respond/i,
-          /volunteer.*participate/i,
-          /self-select.*sample/i
-        ],
-        explanation: "This is a Voluntary Response Sample because participants chose to respond — they were not randomly selected. You're the one who self-selected to be part of the sample; it was your choice."
-      },
-      {
-        name: "Simple Random Sampling",
-        keywords: ["random sample", "equal chance", "no groups", "entire population", "randomly selected", "selected from list"],
-        scenarios: [
-          /(randomly|random) (select|choose|pick|draw) (\d+|some|several) (students|people|individuals) (from|out of) (all|entire|complete) (list|population)/i,
-          /obtain.*list.*select.*\d+/i,
-          /every (member|individual).*equal chance/i,
-          /no.*grouping.*done/i,
-          /select.*from.*list.*without.*group/i
-        ],
-        explanation: "This is Simple Random Sampling because every individual in the population had an equal chance of being selected to form the sample. The researcher obtained a complete list and randomly selected participants without any grouping or stratification."
-      },
-      {
-        name: "Stratified Random Sampling",
-        keywords: ["stratified", "strata", "grouped by", "divided into categories", "from each", "each category"],
-        scenarios: [
-          /(classified|divided|grouped|stratified).*by.*(educational level|faculty|gender|age|group|category|strata)/i,
-          /select.*(one|some|\d+).*from each (group|category|stratum|division)/i,
-          /divided.*once.*unique groups/i,
-          /ensure.*representation.*from.*each/i
-        ],
-        explanation: "This is Stratified Random Sampling because the population was divided once into unique groups (strata), and then we selected at least one individual from each group to form the sample."
-      },
-      {
-        name: "Multistage Random Sampling",
-        keywords: ["multiple stages", "select groups then individuals", "grouped twice", "sampled in steps"],
-        scenarios: [
-          /first.*select.*(towns|schools|areas|regions).*then.*(select|choose).*(students|individuals)/i,
-          /select.*groups.*then.*sample.*from each/i,
-          /divided.*more than once/i,
-          /two-stage|multi-stage/i
-        ],
-        explanation: "This is Multistage Random Sampling because the population was divided into various groups in multiple stages, and then we selected some individuals from the final subgroups to form the sample."
-      },
-      {
-        name: "Cluster Sampling",
-        keywords: ["cluster", "group selected", "surveyed all in group", "entire group", "whole subgroup"],
-        scenarios: [
-          /divided.*groups.*select.*some.*survey all.*in those groups/i,
-          /select.*entire.*group.*and.*survey all/i,
-          /all.*members.*selected groups/i,
-          /choose.*clusters.*study.*everyone/i
-        ],
-        explanation: "This is Cluster Sampling because the population was divided into groups (clusters), and then we selected all individuals from the chosen groups to form the sample."
+    // Enhanced Natural Language Matching System with Question Bank
+    class SamplingMethodClassifier {
+      constructor() {
+        this.methods = [
+          "Voluntary Response Sample",
+          "Simple Random Sampling", 
+          "Stratified Random Sampling",
+          "Multistage Random Sampling",
+          "Cluster Sampling"
+        ];
+        
+        this.questionBank = [];
+        this.initializeQuestionBank();
       }
-    ];
+      
+      initializeQuestionBank() {
+        // Your provided question bank
+        this.questionBank = [
+          {
+            question: "An international pet adoption agency is working to relocate dogs from Jamaica and Canada to new homes in other countries. To ensure the health and suitability of the dogs for adoption, a team visits shelters in both countries and selects a random sample of dogs for health assessments, recording their weight and temperament for the study.",
+            method: "Simple Random Sampling",
+            explanation: "This is Simple Random Sampling because dogs were selected randomly from the entire population without any grouping or stratification."
+          },
+          {
+            question: "An international pet adoption agency is relocating dogs from Jamaica and Canada to new homes in other countries. To ensure a fair representation of different breeds and sizes, the agency divides the dogs into groups based on breed (e.g., small breeds, medium breeds, and large breeds). Then, they randomly select a proportional number of dogs from each group for health assessments, recording their weight and temperament for the study.",
+            method: "Stratified Random Sampling",
+            explanation: "This is Stratified Random Sampling because the population was divided into breed groups (strata) and then randomly sampled from each group."
+          },
+          {
+            question: "A study is being conducted to determine the average number of primary school children in rural St. Andrew who attend face-to-face sessions. Seven towns were chosen at random from a total of twenty. Forty children were then selected at random. What type of sampling method is being used?",
+            method: "Multistage Random Sampling",
+            explanation: "This is Multistage Random Sampling because the selection process occurred in multiple stages (first towns, then children within towns)."
+          },
+          {
+            question: "The Department of Economics would like to know the preferred mode of delivery for classes next semester. They obtain a list of all 2000 students and select 100 from that list. What type of sampling Method is being used?",
+            method: "Simple Random Sampling",
+            explanation: "This is Simple Random Sampling because students were selected randomly from the complete list without any grouping."
+          },
+          {
+            question: "A candy company wishes to research its customers' purchasing behaviors in order to forecast the future of its product line. If there are 10,000 consumers, a random sample of 100 customers may be chosen. What kind of sampling technique is being employed?",
+            method: "Simple Random Sampling",
+            explanation: "This is Simple Random Sampling because customers were selected randomly from the entire population."
+          },
+          {
+            question: "The Department of Economics would like to know the preferred mode of delivery for classes next semester. The department sends out a google form asking students to participate. What type of sampling method is being used?",
+            method: "Voluntary Response Sample",
+            explanation: "This is a Voluntary Response Sample because students chose whether to participate in the survey."
+          },
+          {
+            question: "7Krave bearers in Kingston are divided into four groups. They randomly select 2 groups and interviewed all riders in each group to determine whether they have been robbed in the last two months. What type of sampling method is being used?",
+            method: "Cluster Sampling",
+            explanation: "This is Cluster Sampling because groups (clusters) were randomly selected and all members of those groups were surveyed."
+          },
+          {
+            question: "A bank wants to conduct a client satisfaction survey. Their customers either have chequing accounts, savings accounts or both. They select twenty customers with only have checking accounts, ten customers with only savings accounts, and five customers with both types of account are chosen at random. What type of sampling method is being used?",
+            method: "Stratified Random Sampling",
+            explanation: "This is Stratified Random Sampling because customers were divided into account type groups (strata) and then sampled from each group."
+          },
+          {
+            question: "A research team wants to conduct analysis on countries based on their political regime types. Countries are classified into the following regimes: full democracies, flawed democracies, hybrid regimes and authoritarian regimes. The team randomly selects 5 countries from each of the 4 regimes.",
+            method: "Stratified Random Sampling",
+            explanation: "This is Stratified Random Sampling because countries were divided into political regime groups (strata) and then sampled from each group."
+          },
+          {
+            question: "A bank manager wants to determine the level of work-life balance being experienced by team members. The manager collects data from 10 randomly selected team members at 5 randomly selected locations.",
+            method: "Multistage Random Sampling",
+            explanation: "This is Multistage Random Sampling because the selection process occurred in multiple stages (first locations, then team members within locations)."
+          },
+          {
+            question: "To determine the knowledge and attitudes of University students to crypto currency, a research team obtains a list of all students registered at a University. They then randomly select 1200 students to participate in their study.",
+            method: "Simple Random Sampling",
+            explanation: "This is Simple Random Sampling because students were selected randomly from the complete list."
+          },
+          {
+            question: "You are considering buying a car, but you need to do the necessary research to help you make a decision. You therefore go to a random sample of car dealers and collect information on every model of cars they sell in Jamaica.",
+            method: "Cluster Sampling",
+            explanation: "This is Cluster Sampling because dealers (clusters) were randomly selected and all models from those dealers were surveyed."
+          },
+          {
+            question: "Town planners are concerned about the amount of traffic on Mandela Highway in the mornings. They randomly sample 20 days in four randomly selected months, and collect the number of cars at specific intersections along the thoroughfare.",
+            method: "Multistage Random Sampling",
+            explanation: "This is Multistage Random Sampling because the selection process occurred in multiple stages (first months, then days within months)."
+          },
+          {
+            question: "Jamaica was just voted as one of the cheapest tourist destinations. Before the announcement was made, the Jamaica Tourist Board randomly selected 20 passengers on each flight that landed at the Sangster International Airport.",
+            method: "Cluster Sampling",
+            explanation: "This is Cluster Sampling because flights (clusters) were selected and passengers from those flights were surveyed."
+          },
+          {
+            question: "RefreshCo is interested in launching a new line of flavoured water. They conduct market research to understand the preferences and opinions of their target demographic to ensure a successful product launch. They collect information from a random sample from all three geographic areas – Kingston Metropolitan Area, Other Towns, and Rural Areas.",
+            method: "Stratified Random Sampling",
+            explanation: "This is Stratified Random Sampling because the population was divided into geographic groups (strata) and then sampled from each group."
+          },
+          {
+            question: "The Western Regional Health Authority (WRHA) plans to conduct a comprehensive assessment of the health status and needs of the population in its jurisdiction. To do so, they randomly select 8 health centres in the WRHA and collect data from all patients who have registered at those centres.",
+            method: "Cluster Sampling",
+            explanation: "This is Cluster Sampling because health centers (clusters) were randomly selected and all patients from those centers were surveyed."
+          },
+          {
+            question: "A study is aimed at estimating the average number of bilingual students per secondary school in Puerto Rico. Out of ten (10) major towns in Puerto Rico five (5) were selected randomly, from that 20 secondary schools were randomly selected, and 35 randomly selected classrooms.",
+            method: "Multistage Random Sampling",
+            explanation: "This is Multistage Random Sampling because the selection process occurred in multiple stages (towns → schools → classrooms)."
+          },
+          {
+            question: "An Economics lecturer wants to know how his students like OurVLE as compared to another learning platform. He asks students to send him their opinions by e-mail. Forty percent of his students respond.",
+            method: "Voluntary Response Sample",
+            explanation: "This is a Voluntary Response Sample because students chose whether to participate by sending their opinions."
+          },
+          {
+            question: "In a study of work preferences, 40 workers in a large company were randomly selected and asked whether they preferred to work 4 ten-hour days or 5 eight-hour days per week.",
+            method: "Simple Random Sampling",
+            explanation: "This is Simple Random Sampling because workers were selected randomly from the entire population."
+          },
+          {
+            question: "A researcher is planning a survey to estimate the proportion of employers who do not offer health insurance. Knowing that this may differ by company size, she takes random samples of 100 companies from each of these types: individually/privately owned company with < 50 employees, individually/privately owned company with ≥ 50 employees, public company.",
+            method: "Stratified Random Sampling",
+            explanation: "This is Stratified Random Sampling because companies were divided into size groups (strata) and then sampled from each group."
+          },
+          {
+            question: "An opinion poll is given to a sample of 90 members of a local gym. The members are first divided into men and women, and then a simple random sample of 45 men and a separate simple random sample of 45 women are taken.",
+            method: "Stratified Random Sampling",
+            explanation: "This is Stratified Random Sampling because members were divided into gender groups (strata) and then sampled from each group."
+          },
+          {
+            question: "You plan to sample residents of registered nursing homes in your state. You randomly select 5 counties from your state. From the 5 counties you obtain a list of all nursing homes in those counties and randomly select 5 from each county. You then obtain a list of all residents in the 25 selected nursing homes and randomly select 5 individuals from each nursing home to sample.",
+            method: "Multistage Random Sampling",
+            explanation: "This is Multistage Random Sampling because the selection process occurred in multiple stages (counties → nursing homes → residents)."
+          },
+          {
+            question: "A television station is interested in predicting whether voters in its broadcast area are in favour of government funding for abortions. It asks its viewers to phone in and indicate whether they support or are opposed to federal funding for abortions.",
+            method: "Voluntary Response Sample",
+            explanation: "This is a Voluntary Response Sample because viewers chose whether to participate by phoning in."
+          },
+          {
+            question: "You plan to sample residents of registered nursing homes. You randomly select 15 nursing home residents in your country.",
+            method: "Simple Random Sampling",
+            explanation: "This is Simple Random Sampling because residents were selected randomly from the entire population."
+          },
+          {
+            question: "An opinion poll is given to a sample of 90 members of a local gym. You leave the survey at the front desk of the gym with a notice asking members to complete the survey.",
+            method: "Voluntary Response Sample",
+            explanation: "This is a Voluntary Response Sample because members chose whether to participate by completing the survey."
+          },
+          {
+            question: "You plan to sample residents of registered nursing homes. You randomly select 5 nursing homes in your country and survey all the residents in those selected homes.",
+            method: "Cluster Sampling",
+            explanation: "This is Cluster Sampling because nursing homes (clusters) were randomly selected and all residents from those homes were surveyed."
+          }
+        ];
+      }
+      
+      findBestMatch(input) {
+        const cleanInput = this.normalizeText(input);
+        
+        // 1. First try exact or near-exact matches from question bank
+        const bankMatch = this.findBankMatch(cleanInput);
+        if (bankMatch && bankMatch.similarity > 0.9) {
+          return {
+            ...bankMatch,
+            confidence: bankMatch.similarity,
+            source: 'bank'
+          };
+        }
+        
+        // 2. Try pattern matching if no good bank match
+        const patternMatch = this.patternMatch(cleanInput);
+        if (patternMatch) {
+          return {
+            ...patternMatch,
+            confidence: Math.max(patternMatch.confidence, bankMatch?.similarity || 0),
+            source: bankMatch ? 'hybrid' : 'pattern'
+          };
+        }
+        
+        // 3. Return best bank match if no pattern match (even if low confidence)
+        if (bankMatch) {
+          return {
+            ...bankMatch,
+            confidence: bankMatch.similarity,
+            source: 'bank'
+          };
+        }
+        
+        return null;
+      }
+      
+      normalizeText(text) {
+        return text.toLowerCase()
+          .replace(/[^\w\s]/g, '')
+          .replace(/\s+/g, ' ')
+          .trim();
+      }
+      
+      findBankMatch(input) {
+        let bestMatch = null;
+        let highestSimilarity = 0;
+        
+        for (const item of this.questionBank) {
+          const cleanQuestion = this.normalizeText(item.question);
+          const similarity = this.calculateSimilarity(input, cleanQuestion);
+          
+          if (similarity > highestSimilarity) {
+            highestSimilarity = similarity;
+            bestMatch = {
+              method: item.method,
+              explanation: item.explanation,
+              similarity
+            };
+          }
+        }
+        
+        return bestMatch;
+      }
+      
+      patternMatch(input) {
+        // Patterns for each sampling method
+        const patterns = [
+          {
+            method: "Voluntary Response Sample",
+            regex: /(volunteer|self-select|opt in|google form|decide to participate|send.*opinions|phone in|complete.*survey)/i,
+            explanation: "This is a Voluntary Response Sample because participants chose whether to respond.",
+            confidence: 0.85
+          },
+          {
+            method: "Simple Random Sampling",
+            regex: /(randomly select|random sample|selected at random).*(from|of|among).*(entire|whole|complete|all)/i,
+            explanation: "This is Simple Random Sampling because individuals were selected randomly from the entire population without grouping.",
+            confidence: 0.9
+          },
+          {
+            method: "Stratified Random Sampling",
+            regex: /(divided|grouped|classified).*by.*(type|category|strata|group).*select.*from each/i,
+            explanation: "This is Stratified Random Sampling because the population was divided into groups (strata) and then sampled from each group.",
+            confidence: 0.88
+          },
+          {
+            method: "Multistage Random Sampling",
+            regex: /(first|stage).*select.*then.*select|multistage|multiple stages/i,
+            explanation: "This is Multistage Random Sampling because selection occurred in multiple stages (e.g., first locations, then individuals).",
+            confidence: 0.85
+          },
+          {
+            method: "Cluster Sampling",
+            regex: /(select.*groups?.*survey all|all.*in selected|every.*in chosen)/i,
+            explanation: "This is Cluster Sampling because groups (clusters) were selected and all members of those groups were surveyed.",
+            confidence: 0.87
+          }
+        ];
+        
+        for (const pattern of patterns) {
+          if (pattern.regex.test(input)) {
+            return pattern;
+          }
+        }
+        
+        return null;
+      }
+      
+      calculateSimilarity(s1, s2) {
+        // Simple word overlap similarity
+        const words1 = new Set(s1.split(' '));
+        const words2 = s2.split(' ');
+        let matches = 0;
+        
+        for (const word of words2) {
+          if (words1.has(word)) matches++;
+        }
+        
+        return matches / Math.max(words1.size, words2.length);
+      }
+    }
 
+    // Initialize classifier
+    const classifier = new SamplingMethodClassifier();
+    
     // DOM elements
     const questionInput = document.getElementById('question');
     const resultDiv = document.getElementById('result');
     const methodName = document.getElementById('methodName');
     const methodExplanation = document.getElementById('methodExplanation');
+    const confidenceBar = document.getElementById('confidenceBar');
+    const confidenceText = document.getElementById('confidenceText');
     const darkModeToggle = document.getElementById('darkModeToggle');
 
-    // Example questions including the one from your image
+    // Example questions for the buttons
     const examples = [
-      "The Department of Economics sends out a Google Form asking students to voluntarily participate in a survey about course delivery preferences. What sampling method is this?",
-      "The Department of Economics would like to know the preferred mode of delivery for classes next semester. They obtain a list of all 2000 students and select 100 from that list. What type of sampling Method is being used?",
-      "A university wants to survey students. They divide the student population by faculty (Arts, Science, Engineering) and randomly select 20 students from each faculty. What sampling method is this?",
-      "A national study first randomly selects 10 counties, then randomly selects 5 schools from each county, then randomly selects 20 students from each school. What sampling method is this?",
-      "A researcher divides a city into neighborhoods, randomly selects 5 neighborhoods, and surveys every household in those neighborhoods. What sampling method is this?"
+      classifier.questionBank[5].question,  // Voluntary Response
+      classifier.questionBank[3].question,  // Simple Random
+      classifier.questionBank[1].question,  // Stratified
+      classifier.questionBank[2].question,  // Multistage
+      classifier.questionBank[6].question   // Cluster
     ];
 
-    // Enhanced analysis function
     function analyzeQuestion() {
       const input = questionInput.value.trim();
-      const outputDiv = resultDiv;
-      
-      // Clear previous results
-      outputDiv.className = "result";
       
       if (!input) {
-        displayResult("Error", "Please enter a question about sampling methods.");
+        displayResult("Error", "Please enter a question about sampling methods.", 0);
         return;
       }
 
-      const inputLower = input.toLowerCase();
-
-      // Check for specific scenarios first with more precise matching
-      for (const method of methods) {
-        for (const pattern of method.scenarios) {
-          if (pattern.test(inputLower)) {
-            displayResult(method.name, method.explanation);
-            return;
-          }
-        }
-      }
-
-      // Then check for keywords with context
-      for (const method of methods) {
-        for (const keyword of method.keywords) {
-          if (inputLower.includes(keyword)) {
-            // Additional context checks for simple random sampling
-            if (method.name === "Simple Random Sampling") {
-              if (!inputLower.includes("group") && 
-                  !inputLower.includes("category") && 
-                  !inputLower.includes("strata")) {
-                displayResult(method.name, method.explanation);
-                return;
-              }
-            } else {
-              displayResult(method.name, method.explanation);
-              return;
-            }
-          }
-        }
-      }
-
-      // Special case for simple random when selecting from a list
-      if (/(obtain|have|get).*list.*(select|choose|pick).*\d+/i.test(inputLower) && 
-          !inputLower.includes("group") && !inputLower.includes("category") && !inputLower.includes("strata")) {
+      const result = classifier.findBestMatch(input);
+      
+      if (result) {
+        displayResult(result.method, result.explanation, result.confidence);
+      } else {
         displayResult(
-          "Simple Random Sampling", 
-          "This is Simple Random Sampling because the researcher obtained a complete list of the population and randomly selected participants without any grouping or stratification."
+          "Unable to determine",
+          "Please check the question for clarity or rephrase using sampling terminology.",
+          0
         );
-        return;
       }
-
-      // If no match found
-      displayResult(
-        "Unable to determine", 
-        "Please check the question for clarity or rephrase using sampling terminology. Make sure to include details about how the sample was selected."
-      );
     }
 
-    // Display the result
-    function displayResult(name, explanation) {
+    function displayResult(name, explanation, confidence = 1) {
       methodName.textContent = name;
       methodExplanation.textContent = explanation;
+      
+      // Update confidence meter
+      const confidencePercent = Math.round(confidence * 100);
+      confidenceBar.style.width = `${confidencePercent}%`;
+      
+      let confidenceLevel;
+      if (confidencePercent >= 85) confidenceLevel = 'high';
+      else if (confidencePercent >= 70) confidenceLevel = 'moderate';
+      else confidenceLevel = 'low';
+      
+      confidenceText.textContent = `Confidence: ${confidencePercent}% (${confidenceLevel})`;
       resultDiv.className = "result show";
     }
 
-    // Load example questions
     function loadExample(index) {
       if (index >= 0 && index < examples.length) {
         questionInput.value = examples[index];
@@ -483,9 +693,9 @@
       darkModeToggle.checked = true;
     }
 
-    // Initialize with the example from your image
+    // Initialize with an example
     window.onload = function() {
-      questionInput.value = examples[1]; // The simple random sampling example
+      questionInput.value = examples[1]; // Simple Random example
     };
   </script>
 </body>
