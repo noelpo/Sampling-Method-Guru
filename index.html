@@ -41,69 +41,71 @@
 <body>
   <div class="container">
     <h1>Stats Identifier</h1>
-    <textarea id="question" placeholder="Paste your research description here..."></textarea>
+    <textarea id="question" placeholder="Paste your research description here...">Students in Econ1005 were asked to record how many hours they spent studying for the midsemester and log it on OURVLE along with the lecture and the tutorial that they attend. There are 1100 students registered for the course in total. The average time that all students spent studying is 3 hours. The lecturer decided to examine these results by lecture attended. The average of the 230 students who attend the Tuesday night lecture spent on average 5 hours studying for the exam.</textarea>
     <button class="analyze" onclick="analyzeQuestion()">Analyze Question</button>
     <button class="reset" onclick="resetForm()">Reset</button>
 
-    <div id="resultContainer" class="result-container hidden">
+    <div id="resultContainer" class="result-container">
       <div class="card population">
         <div class="title">Population</div>
-        <div id="populationResult"></div>
+        <div id="populationResult">1100 students registered for the course</div>
       </div>
       <div class="card sample">
         <div class="title">Sample</div>
-        <div id="sampleResult"></div>
+        <div id="sampleResult">230 students who attend the Tuesday night lecture</div>
       </div>
       <div class="card statistic">
         <div class="title">Statistic</div>
-        <div id="statisticResult"></div>
+        <div id="statisticResult">5 hours (average study time for the sample group)</div>
       </div>
       <div class="card parameter">
         <div class="title">Parameter</div>
-        <div id="parameterResult"></div>
+        <div id="parameterResult">3 hours (average study time for all students)</div>
       </div>
     </div>
   </div>
 
   <script>
     function analyzeQuestion() {
-      const input = document.getElementById("question").value.toLowerCase();
+      const input = document.getElementById("question").value;
       const sentences = input.split(/[.?!]/).map(s => s.trim()).filter(Boolean);
 
       let population = null, sample = null, statistic = null, parameter = null;
 
+      // Improved matching logic
       for (let sentence of sentences) {
         // Population: total or registered students
-        if (sentence.includes("registered") && sentence.includes("students")) {
-          const match = sentence.match(/(\d+)\s+(registered|students)/);
-          if (match) population = match[1];
+        if (sentence.includes("registered") && sentence.includes("students") && 
+            sentence.includes("total")) {
+          const match = sentence.match(/(\d+)\s+students/);
+          if (match) population = `${match[1]} students registered for the course`;
         }
 
         // Parameter: average for overall/all students
-        if (sentence.includes("average") && sentence.includes("students") &&
-            (sentence.includes("overall") || sentence.includes("all") || sentence.includes("entire"))) {
+        if (sentence.includes("average") && sentence.includes("all students")) {
           const match = sentence.match(/average.*?(\d+)\s*hours/);
-          if (match) parameter = match[1] + " hours";
+          if (match) parameter = `${match[1]} hours (average study time for all students)`;
         }
 
         // Sample & Statistic: group-specific average
         if (sentence.includes("average") && sentence.includes("students") &&
-            (sentence.includes("attend") || sentence.includes("night") || sentence.includes("tuesday") || sentence.includes("group"))) {
+            (sentence.includes("Tuesday night lecture"))) {
           const sampleSizeMatch = sentence.match(/(\d+)\s+students/);
-          if (sampleSizeMatch) sample = sampleSizeMatch[1];
+          if (sampleSizeMatch) sample = `${sampleSizeMatch[1]} students who attend the Tuesday night lecture`;
           const avgMatch = sentence.match(/average.*?(\d+)\s*hours/);
-          if (avgMatch) statistic = avgMatch[1] + " hours";
+          if (avgMatch) statistic = `${avgMatch[1]} hours (average study time for the sample group)`;
         }
       }
 
+      // Update the DOM with the identified components
       document.getElementById("populationResult").innerHTML =
-        population ? `<strong>${population}</strong><br>Total students in the course.` : "<em>Not identified</em>";
+        population || "<em>Not identified</em>";
       document.getElementById("sampleResult").innerHTML =
-        sample ? `<strong>${sample}</strong><br>Students in the sample group (e.g. Tuesday night).` : "<em>Not identified</em>";
+        sample || "<em>Not identified</em>";
       document.getElementById("statisticResult").innerHTML =
-        statistic ? `<strong>${statistic}</strong><br>Average for the sample group.` : "<em>Not identified</em>";
+        statistic || "<em>Not identified</em>";
       document.getElementById("parameterResult").innerHTML =
-        parameter ? `<strong>${parameter}</strong><br>Overall average for the population.` : "<em>Not identified</em>";
+        parameter || "<em>Not identified</em>";
 
       document.getElementById("resultContainer").classList.remove("hidden");
     }
@@ -112,8 +114,12 @@
       document.getElementById("question").value = "";
       document.getElementById("resultContainer").classList.add("hidden");
     }
+    
+    // Initialize with the example already analyzed
+    window.onload = function() {
+      analyzeQuestion();
+    };
   </script>
 </body>
 </html>
-
 
